@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luận SIM Bát Cực Linh Số v1.7</title>
+<style>
+:root{
+  --bg:#17102b; --bg2:#221741; --card:#2a1d4e; --card2:#33235c;
+  --gold:#e8b64c; --gold2:#f5d78a; --text:#f2ecff; --muted:#b9aede;
+  --cat:#2fbf71; --cat-bg:rgba(47,191,113,.14);
+  --hung:#ef5350; --hung-bg:rgba(239,83,80,.14);
+  --warn:#ffb74d; --line:rgba(232,182,76,.25);
+  --radius:14px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+body{margin:0; font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif; background:linear-gradient(160deg,var(--bg),var(--bg2)); color:var(--text); min-height:100vh}
+header{padding:18px 16px 10px; text-align:center}
+header h1{margin:0; font-size:24px; color:var(--gold); letter-spacing:.5px}
+header .sub{color:var(--muted); font-size:13px; margin-top:4px}
+.badge{display:inline-block; border:1px solid var(--line); color:var(--gold2); border-radius:999px; padding:2px 10px; font-size:12px; margin-top:8px}
+nav{display:flex; gap:8px; padding:10px 12px; position:sticky; top:0; background:rgba(23,16,43,.92); backdrop-filter:blur(6px); z-index:10; overflow-x:auto}
+nav button{flex:1; white-space:nowrap; background:var(--card); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:10px 8px; font-size:14px; cursor:pointer}
+nav button.active{background:var(--gold); color:#241a00; font-weight:700; border-color:var(--gold)}
+main{max-width:860px; margin:0 auto; padding:12px 14px 40px}
+.tab{display:none}
+.tab.active{display:block}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:14px}
+.card h2{margin:0 0 10px; font-size:18px; color:var(--gold2)}
+.card h3{margin:14px 0 6px; font-size:15px; color:var(--gold2)}
+label.flabel{display:block; font-size:13px; color:var(--muted); margin:10px 0 5px}
+input[type=text],input[type=tel],select,textarea{width:100%; background:#1c1236; border:1px solid var(--line); border-radius:10px; color:var(--text); padding:12px; font-size:17px; outline:none}
+input:focus,select:focus{border-color:var(--gold)}
+.seg{display:flex; gap:8px}
+.seg button{flex:1; background:#1c1236; color:var(--text); border:1px solid var(--line); border-radius:10px; padding:10px 6px; font-size:13.5px; cursor:pointer; line-height:1.35}
+.seg button.active{background:var(--gold); color:#241a00; font-weight:700}
+.seg small{display:block; font-weight:400; font-size:11.5px; opacity:.85}
+.btn{display:block; width:100%; background:var(--gold); color:#241a00; border:none; border-radius:12px; padding:14px; font-size:17px; font-weight:800; cursor:pointer; margin-top:14px}
+.btn.secondary{background:var(--card2); color:var(--text); border:1px solid var(--line); font-size:14px; padding:11px; font-weight:600}
+.btn:active{transform:scale(.99)}
+.hint{font-size:12.5px; color:var(--muted); line-height:1.5}
+.err{background:var(--hung-bg); border:1px solid var(--hung); color:#ffcdd2; border-radius:10px; padding:10px 12px; font-size:14px; margin-top:10px}
+.digits{display:flex; flex-wrap:wrap; gap:4px; justify-content:center; margin:6px 0 2px}
+.digits span{width:30px; height:38px; display:flex; align-items:center; justify-content:center; background:#1c1236; border:1px solid var(--line); border-radius:8px; font-size:19px; font-weight:700}
+.pairs{display:flex; flex-direction:column; gap:7px; margin-top:8px}
+.pair{display:flex; align-items:center; gap:10px; background:#1c1236; border-radius:10px; padding:8px 12px; border-left:5px solid #555}
+.pair.cat{border-left-color:var(--cat)}
+.pair.hung{border-left-color:var(--hung)}
+.pair.none{border-left-color:#666; opacity:.75}
+.pair .pnum{font-size:19px; font-weight:800; min-width:52px; letter-spacing:1px}
+.pair .pname{font-weight:700; font-size:15px}
+.pair .pmeta{font-size:12px; color:var(--muted)}
+.pair .ptag{margin-left:auto; font-size:11.5px; font-weight:700; border-radius:999px; padding:3px 9px; white-space:nowrap}
+.ptag.cat{background:var(--cat-bg); color:#7be495}
+.ptag.hung{background:var(--hung-bg); color:#ff9d9a}
+.ptag.mod{background:rgba(255,183,77,.16); color:var(--warn)}
+.ptag.none{background:rgba(255,255,255,.08); color:var(--muted)}
+.verdict{text-align:center; padding:8px 0 2px}
+.verdict .vlabel{font-size:22px; font-weight:800}
+.verdict .vscore{color:var(--muted); font-size:13.5px; margin-top:4px; line-height:1.5}
+.bar{display:flex; height:16px; border-radius:999px; overflow:hidden; margin:10px 0 4px; background:#1c1236}
+.bar .bcat{background:var(--cat)}
+.bar .bhung{background:var(--hung)}
+.bar .bnone{background:#555}
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:12.5px; color:var(--muted); justify-content:center}
+table.stat{width:100%; border-collapse:collapse; font-size:14px}
+table.stat td,table.stat th{padding:7px 6px; border-bottom:1px solid rgba(255,255,255,.07); text-align:left}
+table.stat th{color:var(--gold2); font-size:13px}
+.dot{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px}
+.dot.cat{background:var(--cat)} .dot.hung{background:var(--hung)}
+.alert{border-radius:10px; padding:10px 12px; font-size:14px; margin:7px 0; line-height:1.55}
+.alert.bad{background:var(--hung-bg); border:1px solid rgba(239,83,80,.55)}
+.alert.good{background:var(--cat-bg); border:1px solid rgba(47,191,113,.5)}
+.alert.note{background:rgba(255,183,77,.12); border:1px solid rgba(255,183,77,.45)}
+details.field{border:1px solid var(--line); border-radius:12px; margin:9px 0; background:#1c1236; overflow:hidden}
+details.field summary{cursor:pointer; padding:12px 14px; font-weight:700; font-size:15.5px; list-style:none; display:flex; align-items:center; gap:8px}
+details.field summary::-webkit-details-marker{display:none}
+details.field .fbody{padding:2px 14px 14px; font-size:14px; line-height:1.6}
+details.field .fbody p{margin:6px 0}
+details.field .fbody b{color:var(--gold2)}
+.pairchips{display:flex; flex-wrap:wrap; gap:5px; margin:6px 0}
+.pairchips span{background:var(--card2); border:1px solid var(--line); border-radius:7px; padding:2px 8px; font-size:13px; font-weight:700}
+.grid8{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+@media(max-width:560px){.grid8{grid-template-columns:1fr}}
+.fcard{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px; cursor:pointer}
+.fcard .fname{font-weight:800; font-size:16px}
+.fcard .ftheme{color:var(--muted); font-size:12.5px; margin-top:3px; line-height:1.45}
+.hist-item{display:flex; align-items:center; gap:10px; background:#1c1236; border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:10px 12px; margin:8px 0; cursor:pointer}
+.hist-item .hnum{font-weight:800; font-size:16px; letter-spacing:.5px}
+.hist-item .hmeta{font-size:12px; color:var(--muted)}
+.hist-item .hdel{margin-left:auto; background:none; border:none; color:var(--hung); font-size:18px; cursor:pointer; padding:4px 8px}
+.src{font-size:11px; border-radius:999px; padding:2px 8px; margin-left:6px; vertical-align:middle}
+.src.doc{background:rgba(47,191,113,.16); color:#7be495}
+.src.web{background:rgba(255,183,77,.16); color:var(--warn)}
+.share-overlay{position:fixed; inset:0; background:rgba(10,6,24,.88); display:none; overflow-y:auto; z-index:60; padding:16px 10px 30px}
+.share-overlay.open{display:block}
+.share-actions{max-width:680px; margin:0 auto 12px; color:var(--text)}
+.share-actions label{font-size:13.5px; color:var(--muted); display:block; margin-bottom:8px}
+.share-actions input{margin-top:5px}
+.share-btns{display:flex; gap:8px}
+.share-btns .btn{margin-top:0}
+.share-card{background:#fffdf6; color:#2a2118; max-width:680px; margin:0 auto; border-radius:14px; padding:26px 24px 20px; border-top:7px solid #c9962e; box-shadow:0 12px 40px rgba(0,0,0,.45); -webkit-print-color-adjust:exact; print-color-adjust:exact}
+.share-card .rep-head{text-align:center; border-bottom:2px solid #e7d9b8; padding-bottom:12px}
+.share-card .rep-title{font-size:21px; font-weight:800; letter-spacing:1px; color:#8a6410}
+.share-card .rep-sub{font-size:12.5px; color:#8a7a55; margin-top:3px}
+.share-card .rep-num{text-align:center; font-size:31px; font-weight:800; letter-spacing:3px; margin:14px 0 2px; color:#2a2118; word-break:break-all}
+.share-card .rep-for{text-align:center; font-size:14.5px; color:#6b5a33}
+.share-card .rep-verdict{text-align:center; font-size:19px; font-weight:800; margin:10px 0 2px}
+.share-card .rep-score{text-align:center; font-size:13px; color:#7a6a45}
+.share-card h3{color:#8a6410; font-size:15.5px; margin:16px 0 7px; border-bottom:1px solid #eee0bd; padding-bottom:4px}
+.share-card p, .share-card li{font-size:13.8px; line-height:1.6}
+.share-card ul{margin:5px 0; padding-left:19px}
+.share-card .rep-drow{display:flex; align-items:center; gap:9px; margin:6px 0; font-size:13.5px}
+.share-card .rep-drow .rn{width:150px; font-weight:700; flex-shrink:0}
+.share-card .rep-dbar{flex:1; height:11px; background:#f0e7cd; border-radius:999px; overflow:hidden}
+.share-card .rep-dbar div{height:100%}
+.share-card .rep-drow .rp{width:86px; text-align:right; font-weight:700; flex-shrink:0}
+.share-card .rep-chips{display:flex; flex-wrap:wrap; gap:5px}
+.share-card .rep-chips span{border:1px solid #d9c88f; border-radius:7px; padding:2px 8px; font-size:12.8px; background:#fbf5e2}
+.share-card .rep-segs{display:flex; gap:8px}
+.share-card .rep-segs div{flex:1; text-align:center; border:1px solid #e2d3a5; border-radius:9px; padding:7px 4px; font-size:12.5px; background:#fbf5e2}
+.share-card .rep-segs b{display:block; font-size:16px}
+.share-card .rep-foot{border-top:2px solid #e7d9b8; margin-top:16px; padding-top:9px; font-size:11.8px; color:#8a7a55; text-align:center; line-height:1.55}
+@media print{
+  header, nav, main, footer, .share-actions{display:none !important}
+  body{background:#fff}
+  .share-overlay{display:none !important}
+  .share-overlay.open{position:static; display:block !important; background:#fff; padding:0; overflow:visible}
+  .share-card{box-shadow:none; max-width:none; border-radius:0}
+}
+footer{text-align:center; color:var(--muted); font-size:12px; padding:0 20px 26px; line-height:1.6}
+.drow{margin:11px 0}
+.drow .dhead{display:flex; justify-content:space-between; font-size:14.5px; font-weight:700}
+.drow .dhead .dpct{color:var(--gold2)}
+.dbar{height:13px; border-radius:999px; background:#1c1236; overflow:hidden; margin:5px 0 3px}
+.dbar div{height:100%; border-radius:999px}
+.dnote{font-size:12.5px; color:var(--muted); line-height:1.5}
+.brow{display:flex; align-items:center; gap:10px; background:#1c1236; border:1px solid rgba(255,255,255,.08); border-left:5px solid #555; border-radius:10px; padding:10px 12px; margin:8px 0; flex-wrap:wrap}
+.brow.top{border-left-color:var(--gold); background:#2a2145}
+.brow .brank{font-weight:800; font-size:17px; color:var(--gold2); min-width:30px}
+.brow .bnum{font-weight:800; font-size:16.5px; letter-spacing:.5px}
+.brow .bmeta{font-size:12.5px; color:var(--muted); line-height:1.5}
+.brow .bdom{font-size:12px; color:var(--muted)}
+.brow .bdom b{color:var(--text)}
+.btag{font-size:11px; font-weight:700; border-radius:999px; padding:2px 8px}
+.btag.bad{background:var(--hung-bg); color:#ff9d9a}
+.btag.good{background:var(--cat-bg); color:#7be495}
+.brow .bview{margin-left:auto; background:var(--card2); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:7px 12px; font-size:13px; cursor:pointer}
+textarea{min-height:110px; resize:vertical; font-size:15px; line-height:1.5}
+.qpair{text-align:center; font-size:44px; font-weight:800; letter-spacing:6px; color:var(--gold2); margin:8px 0 2px}
+.qfield{text-align:center; font-size:26px; font-weight:800; color:var(--gold2); margin:8px 0 2px}
+.qask{text-align:center; color:var(--muted); font-size:14px}
+.qopts{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:14px}
+@media(max-width:480px){.qopts{grid-template-columns:1fr}}
+.qopt{background:#1c1236; border:1px solid var(--line); color:var(--text); border-radius:11px; padding:13px 10px; font-size:16px; font-weight:700; cursor:pointer}
+.qopt:disabled{cursor:default; opacity:.92}
+.qopt.correct{background:var(--cat-bg); border-color:var(--cat); color:#7be495}
+.qopt.wrong{background:var(--hung-bg); border-color:var(--hung); color:#ff9d9a}
+.qstats{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:6px}
+.qstats span{background:#1c1236; border:1px solid rgba(255,255,255,.09); border-radius:999px; padding:4px 12px; font-size:13px}
+.chk{display:flex; align-items:center; gap:8px; font-size:14px; margin-top:12px; cursor:pointer}
+.chk input{width:18px; height:18px; accent-color:var(--gold)}
+.kv{font-size:14px; line-height:1.65}
+.kv b{color:var(--gold2)}
+</style>
+</head>
+<body>
+<header>
+  <h1>BÁT CỰC LINH SỐ</h1>
+  <div class="sub">Luận SIM theo 8 từ trường - chạy local, không cần internet</div>
+  <span class="badge">v1.7 (12/11/2026)</span>
+</header>
+<nav>
+  <button data-tab="luan" class="active">Luận SIM</button>
+  <button data-tab="kethop">CCCD + SIM</button>
+  <button data-tab="chonsim">Chọn SIM</button>
+  <button data-tab="luyen">Luyện tập</button>
+  <button data-tab="tra">Tra từ trường</button>
+  <button data-tab="lichsu">Lịch sử</button>
+  <button data-tab="huongdan">Hướng dẫn</button>
+</nav>
+<main>
+  <!-- TAB LUAN -->
+  <section class="tab active" id="tab-luan">
+    <div class="card">
+      <h2>Nhập dãy số cần luận</h2>
+      <label class="flabel">Loại dãy số</label>
+      <div class="seg" id="segType">
+        <button data-type="sim" class="active">Số điện thoại<small>hậu thiên - chỉnh vận</small></button>
+        <button data-type="cccd">Số CCCD<small>tiên thiên - mệnh</small></button>
+        <button data-type="khac">Dãy số khác<small>biển số, tài khoản...</small></button>
+      </div>
+      <label class="flabel">Dãy số</label>
+      <input type="tel" id="inpNumber" placeholder="VD: 0913681986" autocomplete="off">
+      <label class="flabel">Cách chia cặp</label>
+      <div class="seg" id="segMethod">
+        <button data-method="ktc" class="active">Kim Tâm Cát<small>cặp thật, xét số 0 và số 5</small></button>
+        <button data-method="truot">Trượt liền kề<small>10 số thành 9 cặp</small></button>
+      </div>
+      <button class="btn" id="btnAnalyze">LUẬN NGAY</button>
+      <div id="inpError"></div>
+      <p class="hint" style="margin-top:10px">Cách Kim Tâm Cát: bỏ số 0 và số 5 ra để ghép cặp thật, số 0 nằm giữa làm từ trường bị ẩn và yếu đi, số 5 nằm giữa làm từ trường mạnh lên và rõ ra. Cách trượt liền kề: tách từng cặp 2 số kề nhau, cặp nào dính số 0 hoặc số 5 thì không thành từ trường.</p>
+    </div>
+    <div id="result"></div>
+  </section>
+
+  <!-- TAB KET HOP -->
+  <section class="tab" id="tab-kethop">
+    <div class="card">
+      <h2>Luận kết hợp CCCD + SIM</h2>
+      <p class="hint">CCCD là tiên thiên - mệnh cố định không đổi. SIM là hậu thiên - công cụ chỉnh vận. Mục này đối chiếu: mệnh đang vướng hung tinh nào, SIM có cát tinh chế hóa được không, có bị cộng hưởng xấu không, để kết luận số SIM có hợp mệnh hay không.</p>
+      <label class="flabel">Số CCCD (tiên thiên)</label>
+      <input type="tel" id="inpCCCD" placeholder="VD: 079095001234" autocomplete="off">
+      <label class="flabel">Số điện thoại (hậu thiên)</label>
+      <input type="tel" id="inpSIM" placeholder="VD: 0913681986" autocomplete="off">
+      <label class="flabel">Cách chia cặp (áp dụng cho cả 2 dãy)</label>
+      <div class="seg" id="segMethodKH">
+        <button data-method="ktc" class="active">Kim Tâm Cát<small>cặp thật, xét số 0 và số 5</small></button>
+        <button data-method="truot">Trượt liền kề<small>10 số thành 9 cặp</small></button>
+      </div>
+      <button class="btn" id="btnCombo">LUẬN KẾT HỢP</button>
+      <div id="comboError"></div>
+    </div>
+    <div id="comboResult"></div>
+  </section>
+
+  <!-- TAB CHON SIM -->
+  <section class="tab" id="tab-chonsim">
+    <div class="card">
+      <h2>Luận hàng loạt - chọn SIM</h2>
+      <p class="hint">Dán danh sách số bạn đang cân nhắc (mỗi số 1 dòng, hoặc cách nhau bằng dấu phẩy, dấu cách đều được, tối đa 50 số). App luận hết và xếp hạng từ tốt nhất xuống.</p>
+      <label class="flabel">Danh sách số điện thoại</label>
+      <textarea id="inpBatch" placeholder="VD:&#10;0913681986&#10;0905123789&#10;0987654321"></textarea>
+      <label class="flabel">Số CCCD của bạn (không bắt buộc - điền thì xếp hạng theo độ hợp mệnh)</label>
+      <input type="tel" id="inpCCCD2" placeholder="Để trống nếu chỉ xếp hạng theo bản thân dãy SIM" autocomplete="off">
+      <label class="flabel">Ưu tiên xếp hạng theo</label>
+      <select id="selPriority">
+        <option value="">Tổng thể (điểm chung, hoặc hợp mệnh nếu có CCCD)</option>
+        <option value="taivan">Lĩnh vực Tài vận</option>
+        <option value="sunghiep">Lĩnh vực Sự nghiệp</option>
+        <option value="tinhcam">Lĩnh vực Tình cảm - Hôn nhân</option>
+        <option value="suckhoe">Lĩnh vực Sức khỏe</option>
+        <option value="quynhan">Lĩnh vực Quý nhân - Quan hệ</option>
+      </select>
+      <label class="flabel">Cách chia cặp</label>
+      <div class="seg" id="segMethodCS">
+        <button data-method="ktc" class="active">Kim Tâm Cát<small>cặp thật, xét số 0 và số 5</small></button>
+        <button data-method="truot">Trượt liền kề<small>10 số thành 9 cặp</small></button>
+      </div>
+      <label class="chk"><input type="checkbox" id="chkFilterTail"> Loại hẳn số có đuôi xấu (đuôi 0, đuôi 05, hung tinh chốt đuôi)</label>
+      <button class="btn" id="btnBatch">LUẬN VÀ XẾP HẠNG</button>
+      <div id="batchError"></div>
+    </div>
+    <div id="batchResult"></div>
+  </section>
+
+  <!-- TAB LUYEN TAP -->
+  <section class="tab" id="tab-luyen">
+    <div class="card">
+      <h2>Luyện thuộc 64 cặp số</h2>
+      <p class="hint">Trắc nghiệm ngắn để thuộc bảng cặp số của 8 từ trường. Trả lời xong app giải thích ngay, học kiểu này thuộc rất nhanh.</p>
+      <label class="flabel">Chế độ luyện</label>
+      <div class="seg" id="segQuizMode">
+        <button data-qmode="pair" class="active">Thấy cặp số - đoán từ trường<small>VD: 68 thuộc từ trường nào?</small></button>
+        <button data-qmode="field">Thấy từ trường - đoán cặp số<small>VD: cặp nào thuộc Thiên Y?</small></button>
+      </div>
+      <div class="qstats" id="quizStats"></div>
+      <div id="quizBox" style="margin-top:12px"></div>
+      <button class="btn" id="btnNextQ">BẮT ĐẦU</button>
+    </div>
+  </section>
+
+  <!-- TAB TRA -->
+  <section class="tab" id="tab-tra">
+    <div class="card">
+      <h2>Tra nhanh 1 cặp số</h2>
+      <label class="flabel">Nhập 2 chữ số (VD: 68)</label>
+      <input type="tel" id="inpPair" maxlength="2" placeholder="VD: 68" autocomplete="off">
+      <div id="pairResult" style="margin-top:10px"></div>
+    </div>
+    <div class="card">
+      <h2>8 từ trường - bấm vào để xem chi tiết</h2>
+      <div class="grid8" id="fieldGrid"></div>
+    </div>
+    <div id="fieldDetail"></div>
+  </section>
+
+  <!-- TAB LICH SU -->
+  <section class="tab" id="tab-lichsu">
+    <div class="card">
+      <h2>Lịch sử đã luận</h2>
+      <div id="histList"></div>
+      <button class="btn secondary" id="btnClearHist">Xóa hết lịch sử</button>
+    </div>
+  </section>
+
+  <!-- TAB HUONG DAN -->
+  <section class="tab" id="tab-huongdan">
+    <div class="card">
+      <h2>Cách app luận</h2>
+      <div class="kv">
+        <p><b>Nền tảng:</b> Bát Cực Linh Số chia các cặp 2 chữ số thành 8 từ trường: 4 cát tinh (Sinh Khí, Thiên Y, Diên Niên, Phục Vị) và 4 hung tinh (Họa Hại, Ngũ Quỷ, Lục Sát, Tuyệt Mệnh). Mỗi từ trường có đúng 8 cặp, tổng 64 cặp. Cặp nào chứa số 0 hoặc số 5 thì không tự thành từ trường.</p>
+        <p><b>Mức năng lượng:</b> trong mỗi từ trường, các cặp xếp theo thứ tự mạnh dần xuống yếu: cặp đầu mạnh nhất (mức 4), rồi mức 3, mức 2, cặp cuối yếu nhất (mức 1). Điểm luận = cộng điểm cát, trừ điểm hung theo mức năng lượng của từng cặp.</p>
+        <p><b>Số 0:</b> tính ẩn tàng. Nằm giữa 2 số thì từ trường của 2 số đó bị ẩn, yếu đi (VD 103 là Thiên Y có 0: tiền có nhưng bị kẹt, tình cảm bị che giấu). Đuôi số là 0 bị cảnh báo nặng: mọi thành quả dễ về 0.</p>
+        <p><b>Số 5:</b> tính hiển lộ. Nằm giữa thì tăng cường từ trường đó (VD 153 là Thiên Y có 5: tiền đến nhanh và rõ; nhưng 157 là Họa Hại có 5 thì thị phi cũng bùng mạnh). Đuôi 05 cũng bị cảnh báo.</p>
+        <p><b>Đuôi số:</b> cặp cuối dãy có ý nghĩa chốt lại cả dãy nên app xét riêng: đuôi cát là tốt, đuôi hung hoặc đuôi 0 là điểm trừ lớn.</p>
+        <p><b>Kết hợp:</b> app tự nhận diện vài tổ hợp đặc biệt theo tài liệu: Tuyệt Mệnh thêm Họa Hại (đầu tư thất bại), Tuyệt Mệnh thêm Lục Sát (đào hoa), Họa Hại thêm Tuyệt Mệnh (kiện tụng), Lục Sát thêm Tuyệt Mệnh (tính tình xấu), Ngũ Quỷ đi cùng Tuyệt Mệnh (lưu ý sức khỏe), và các cặp chế hóa: Thiên Y chế Tuyệt Mệnh, Sinh Khí chế Họa Hại, Diên Niên chế Lục Sát, Phục Vị chế Ngũ Quỷ.</p>
+        <p><b>Bản luận để gửi:</b> sau khi luận, bấm nút "Tạo bản luận đẹp để gửi" để mở 1 bản luận trình bày sáng, gọn và trang trọng (có chỗ điền tên người được luận). Từ đó bạn chụp màn hình để gửi nhanh, hoặc bấm In / Lưu PDF và chọn "Lưu thành PDF" để có file gửi qua Zalo, email. Áp dụng cho cả luận đơn và luận kết hợp CCCD + SIM.</p>
+        <p><b>Luyện tập:</b> mục Luyện tập là trắc nghiệm thuộc 64 cặp số theo 2 chiều: thấy cặp số đoán từ trường, và thấy từ trường đoán cặp số. Thống kê đúng sai, chuỗi đúng liên tiếp và chuỗi tốt nhất được lưu trên máy để bạn theo dõi tiến bộ.</p>
+        <p><b>Dòng năng lượng:</b> biểu đồ vẽ điểm tích lũy của dãy theo từng cặp (cát cộng, hung trừ), chia dãy thành 3 đoạn đầu - giữa - cuối. Đoạn cuối mạnh hơn đoạn đầu là vận đi lên về sau; ngược lại là hậu vận đuối dần. Vạch 0 là ranh giới: đường nằm trên là cát áp đảo, chìm xuống dưới là hung áp đảo.</p>
+        <p><b>Cảnh báo quá mức:</b> một từ trường lặp từ 3 lần trong dãy, hoặc chạy liền nhau từ 3 cặp liên tiếp, sẽ bị app cảnh báo kèm mặt trái của nó theo tài liệu. Cát tinh quá nhiều cũng hóa vấn đề: Thiên Y nhiều dễ lao lực và huyết áp, Sinh Khí nhiều và dài thì lười và thiếu chí tiến, Phục Vị nhiều thì bảo thủ trì trệ. Hung tinh lặp nhiều thì mặt xấu bị nhân lên.</p>
+        <p><b>Chấm điểm theo lĩnh vực:</b> ngoài điểm tổng, app chấm riêng 5 lĩnh vực (Tài vận, Sự nghiệp, Tình cảm - Hôn nhân, Sức khỏe, Quý nhân - Quan hệ) theo thang 100, 50 là trung tính. Mỗi từ trường có hệ số ảnh hưởng riêng lên từng lĩnh vực, đặt theo mục chủ về của nó trong tài liệu: VD Thiên Y chủ tiền tài nên Tài vận +2; Diên Niên là cát tinh nhưng tài liệu ghi nhiều bệnh vặt nên Sức khỏe -1; Lục Sát là hung tinh nhưng giỏi quan hệ xã hội nên Quý nhân +1 trong khi Tình cảm -2. Điểm cặp nào càng mạnh, có 5 tăng cường hay có 0 làm ẩn, thì ảnh hưởng lên lĩnh vực càng lớn theo tương ứng.</p>
+        <p><b>Luận hàng loạt (mục Chọn SIM):</b> dán tối đa 50 số, app xếp hạng theo điểm tổng thể, hoặc theo điểm hợp mệnh nếu bạn điền CCCD, hoặc theo 1 lĩnh vực ưu tiên bạn chọn. Nhãn Đuôi xấu gồm đuôi 0, đuôi 05 và hung tinh chốt đuôi; bật mục lọc thì các số đó bị loại khỏi bảng.</p>
+        <p><b>Luận kết hợp CCCD + SIM:</b> mục CCCD + SIM luận riêng từng dãy rồi đối chiếu. Hung tinh trong mệnh (CCCD) nếu gặp đúng cát tinh chế hóa trong SIM (Thiên Y chế Tuyệt Mệnh, Sinh Khí chế Họa Hại, Diên Niên chế Lục Sát, Phục Vị chế Ngũ Quỷ) thì được giảm nhẹ; ngược lại hung tinh nào xuất hiện ở cả mệnh lẫn SIM thì thành cộng hưởng xấu, nặng thêm. Điểm hợp mệnh = điểm trung bình của SIM, cộng 0,4 cho mỗi hung mệnh được chế hóa, cộng 0,2 cho mỗi cát cộng hưởng, trừ 0,5 cho mỗi hung cộng hưởng. Từ điểm này app xếp mức: Rất hợp mệnh, Hợp mệnh, Bình thường, Chưa hợp, Khắc mệnh.</p>
+        <p><b>Nguồn nội dung:</b> nhãn <span class="src doc">Tài liệu</span> là nội dung luận lấy từ tài liệu BCLS bạn cung cấp. Nhãn <span class="src web">Bổ sung</span> là nội dung chuẩn phổ biến của BCLS (Kim Tâm Cát) dùng tạm cho phần tài liệu chưa có: mục Họa Hại, Tuyệt Mệnh và bảng cặp số của Phục Vị, Ngũ Quỷ.</p>
+        <p><b>Lưu ý:</b> kết quả chỉ mang tính tham khảo theo quan niệm Bát Cực Linh Số, không phải kết luận khoa học. Dữ liệu lịch sử chỉ lưu trên máy này (localStorage), không gửi đi đâu.</p>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>Kết quả luận theo Bát Cực Linh Số chỉ để tham khảo.<br>Mệnh là tiên thiên, số điện thoại là hậu thiên - hậu thiên tốt vẫn cần chính mình nỗ lực.</footer>
+<div class="share-overlay" id="shareOverlay">
+  <div class="share-actions">
+    <label>Tên người được luận (không bắt buộc, sẽ hiện trên bản luận)
+      <input type="text" id="inpShareName" placeholder="VD: anh Tuấn, chị Lan...">
+    </label>
+    <div class="share-btns">
+      <button class="btn" id="btnPrintShare">In / Lưu PDF</button>
+      <button class="btn secondary" id="btnCloseShare">Đóng</button>
+    </div>
+    <p class="hint" style="margin-top:8px">Mẹo: bấm In / Lưu PDF rồi chọn "Lưu thành PDF" để có file gửi qua Zalo, hoặc chụp màn hình bản luận này để gửi nhanh.</p>
+  </div>
+  <div class="share-card" id="shareCard"></div>
+</div>
+<script>
+"use strict";
+/* ============ DU LIEU 8 TU TRUONG ============ */
+/* pairs sap theo thu tu nang luong giam dan: 2 cap dau muc 4, tiep theo muc 3, muc 2, muc 1 */
+const FIELDS = {
+  sinhkhi: { name:"Sinh Khí", element:"Mộc", group:"cat", src:"doc",
+    theme:"Mối quan hệ - Quý nhân - Vui vẻ, thoải mái",
+    pairs:["14","41","67","76","39","93","28","82"],
+    pros:"Vui vẻ, lạc quan, EQ cao, xử lý mọi việc bình tĩnh nên lan năng lượng tích cực cho người xung quanh. Nhiều mối quan hệ, nhiều quý nhân giúp đỡ, gặp dữ hóa lành, chuyển nguy thành an. Là người hòa giải, giao tiếp và kết nối giỏi, dễ tiếp nhận cái mới, thích giúp người, nhân duyên và bạn bè tốt. Người ở cạnh cũng được hưởng chung vận khí tốt này.",
+    cons:"An dật, lười, thiếu chủ kiến và động lực, tính cạnh tranh thấp, dễ hài lòng với hiện tại, thiếu chí tiến thủ. Nếu Sinh Khí quá mạnh và dài thì dễ sống trong vùng an toàn, ngại thay đổi.",
+    money:"Quý nhân mang tiền tài đến, hay có khoản tiền bất ngờ, thậm chí trúng số. Tính hào phóng vì anh em bạn bè nên dễ bị lợi dụng, cần tiết chế. Khả năng giữ tiền ở mức trung bình (hạng 5), khái niệm quản lý tài chính yếu.",
+    career:"Gặp nhiều quý nhân nâng đỡ, trong gang tấc vẫn có sinh cơ. Hợp ngành dịch vụ, thiết kế, đổi mới, tiếp thị, quảng cáo - những nơi nhiều quý nhân giúp kiếm tiền.",
+    love:"Hôn nhân ngọt ngào, gia đình hạnh phúc viên mãn. Chưa có đối tượng thì cứ thản nhiên tùy duyên, cuối cùng nhân duyên sẽ xuất hiện khiến bản thân ngạc nhiên.",
+    health:"Nhìn chung nhẹ nhàng, ít điểm xấu về sức khỏe trong tài liệu.",
+    quynhan:"Rất nhiều quý nhân, là điểm mạnh nhất của từ trường này.",
+    advice:"Nên kết hợp với Thiên Y hoặc Diên Niên để khắc chế tính lười và thiếu tiến thủ: vừa vui vẻ kiếm tiền, vừa có chí tiến." },
+  thieny: { name:"Thiên Y", element:"Thổ", group:"cat", src:"doc",
+    theme:"Tiền tài - Hạnh phúc - Tình cảm - Làm chủ",
+    pairs:["13","31","68","86","49","94","27","72"],
+    pros:"Thiện lương, hào phóng, thích giúp người, vợ chồng đoan chính, chính tài, đơn thuần, không tâm cơ, được mọi người yêu mến. Trời phú thông minh, trí tuệ tốt, tiền tài may mắn, nhiều quý nhân, gia đạo hạnh phúc, công việc thăng tiến. Có khí chất và năng lực làm chủ, chưa làm chủ thì cũng là cánh tay đắc lực của sếp.",
+    cons:"Thiện lương nên thiếu ý kiến độc lập, thiếu suy nghĩ khi giải quyết việc, hào phóng hay giúp người nên dễ bị lừa mất tiền.",
+    money:"Con số đem đến tiền bạc, tài vận, tình cảm và hôn nhân đoan chính. Tiền tài đổ về từ tứ phương tám hướng, được hưởng đầy đủ, hạnh phúc. Điểm yếu là khoản tiền nhỏ hay bỏ phí, quản tiền không chặt vì không đắn đo nhiều.",
+    career:"Có thể thành đại sự, làm ông chủ, lãnh đạo hoặc cánh tay đắc lực của doanh nghiệp. Thường có thành tích lớn, dễ tìm ra hướng kiếm tiền. Yêu thích tâm linh, tôn giáo, giác quan thứ sáu rất mạnh - nhất là khi đi cùng Phục Vị. Ham học hỏi, có khiếu văn chương.",
+    love:"Hôn nhân đoan chính, tình cảm tốt đẹp khi chọn đúng số.",
+    health:"Cần chú ý huyết áp và hệ tuần hoàn máu, nhất là người lớn tuổi dùng nhiều Thiên Y: dễ lao tâm khổ tứ kiếm tiền mà quên nghỉ ngơi.",
+    quynhan:"Nhiều quý nhân lớn tuổi hơn, các bậc chú bác, anh chị giúp đỡ che chở, bạn bè nhiều, thường được ưu ái chiếu cố.",
+    advice:"Không phải cứ nhiều Thiên Y là tốt: chọn sai số cũng có thể dẫn đến ly hôn hoặc vấn đề huyết áp. Có Thiên Y thì tập trung làm ăn kiếm tiền, xây dựng hôn nhân, và phải sống thiện lương mới xứng với năng lượng này.",
+    withZero:"Thiên Y có 0: tài chính bị thắt chặt, không có tiền, mua nhà mắc nợ, cho mượn tiền không đòi được, đầu tư dễ thất bại, dễ chia tay, gặp tình tay ba, ngoại tình nhưng khó nhận ra. VD 806 là tài phú bị ẩn giấu, có nhưng bị mắc kẹt; 860 là tài phú không có; 103 là tình cảm bị ẩn giấu; 130 là không có tình cảm." },
+  diennien: { name:"Diên Niên", element:"Kim", group:"cat", src:"doc",
+    theme:"Công việc - Chịu khó - Nặng gánh - Chung thủy",
+    pairs:["19","91","78","87","34","43","26","62"],
+    pros:"Thường là lãnh đạo, chúa tể một phương, sức phán đoán cực mạnh, khó thuyết phục trừ khi gặp người năng lực cao hơn hẳn và lý lẽ rõ ràng. Ý chí kiên định, tâm lý vững, lập trường ổn định, có trách nhiệm, dám đảm đương, trọng chữ tín, nói 1 không 2. Chịu áp lực rất tốt, tâm địa thiện lương, kỹ tính, tuổi thọ cao. Năng lượng càng mạnh thì chức vụ càng lớn, áp lực càng lớn.",
+    cons:"Tự làm một mình nên ít quý nhân, ít mối quan hệ, dễ cực khổ, lao lực. Tiết kiệm, kỹ tính, gia trưởng, sĩ diện, cái tôi mạnh, cố chấp, khó tiếp nhận ý kiến người khác, ít quan tâm cảm xúc của người khác.",
+    money:"Vất vả kiếm tiền nhưng giữ tiền rất tốt: tính toán chi tiết tỉ mỉ, quản lý tài sản kỹ, không hao tốn, ghét lãng phí. Là kiểu biết tiêu đúng nơi đúng chỗ, rất lợi cho giữ tiền.",
+    career:"Hợp vai trò lãnh đạo, quản lý, người gánh vác. Thích làm việc một mình, chịu đựng giỏi.",
+    love:"Chung thủy. Vì nặng công việc nên khi gặp cơ hội yêu đương, lời khuyên trong tài liệu là tạm buông công việc, nghỉ ngơi một chút để tình yêu chậm rãi tiếp cận.",
+    health:"Vất vả lâu ngày thành tật: dễ bệnh cổ, vai, gáy, tê bì chân tay, thấp khớp về già, giấc ngủ không tốt, rụng tóc, bệnh tinh thần và tim.",
+    quynhan:"Ít quý nhân vì quen tự làm một mình.",
+    advice:"Biết kết hợp mức Diên Niên vừa với bối cảnh công việc của mình: mạnh quá thì gánh nặng và lao lực, vừa đủ thì bền và giữ được tiền.",
+    withZero:"Diên Niên có 0: nỗ lực mãi không thành, bị cản trở chống phá, cực kỳ gian nan trắc trở, không được công nhận. VD 109 là năng lực bị ẩn giấu, không phát huy được dù thực tế rất mạnh; 190 là không có năng lực.",
+    atTail:"Diên Niên ở đuôi: tiền kiếm được dễ bị mắc kẹt vào đầu tư kinh doanh, khó khăn lắm mới rút ra được (theo tài liệu)." },
+  phucvi: { name:"Phục Vị", element:"Thổ", group:"cat", src:"mixed",
+    theme:"Ổn định - Chờ đợi - Tích lũy - Cần cảm giác an toàn",
+    pairs:["11","22","99","88","77","66","44","33"],
+    pros:"Kiên nhẫn, nghị lực cao, suy nghĩ phân tích logic, có thể ngồi yên nhiều giờ để nghiên cứu, làm việc tỉ mỉ tinh tế. Trung thành với một nửa của mình, trách nhiệm với gia đình rất mạnh.",
+    cons:"Thường lo lắng, thiếu cảm giác an toàn, khó đưa ra lựa chọn, rất cần cổ vũ động viên, khó chấp nhận quở trách. Sợ mạo hiểm, sợ tổn thương, chờ đợi quá lâu nên hay mất cơ hội, bảo thủ, không dám hành động. Đặc tính lớn nhất: theo cát thì cát, theo hung thì hung - vận tốt thì tốt theo, vận xấu thì trì trệ theo.",
+    money:"Kiếm tiền khổ sở, phải đánh đổi nhiều vất vả, thích cầm tiền cố định và thu nhập ổn định. Không thích mạo hiểm đầu tư, thích giữ tiền nguyên hiện trạng, chắc chắn và an toàn.",
+    career:"Gò bó theo khuôn phép, khó thay đổi, hợp công việc ổn định cao, công chức, công việc tỉ mỉ. Nếu hành động mà không nghe khuyên bảo của người khác thì kết quả rất tệ.",
+    love:"Không chủ động yêu đương, cần cảm giác yêu thương và an toàn, tâm thái đa nghi thấp thỏm nên dễ đánh mất cơ hội. Người chưa có người yêu thì khó xuất hiện nhân duyên mới, chờ đợi là ma chú tình yêu của Phục Vị. Đã kết hôn thì thái độ bình thản, song phương ít tương tác, biến hóa nhỏ cũng làm họ mất cảm giác an toàn.",
+    health:"Bệnh về tim, não do lo nghĩ hao tổn năng lượng, hoặc chuyển sang bệnh ẩn tính, đau xương khớp.",
+    quynhan:"Người nhà là quý nhân tốt nhất.",
+    advice:"Muốn tương tác tốt với người có Phục Vị phải kiên nhẫn cổ vũ, cho họ cảm giác an toàn và được coi trọng; bị xem nhẹ hay lạnh lùng là điều họ không chấp nhận được. Lưu ý trong tài liệu: Phục Vị đứng sau kích mạnh hơn đứng trước (144 mạnh hơn 441), và 4 số giống nhau liên tiếp (tứ quý) chủ công việc trì trệ, không bứt phá dù rất cố gắng." },
+  hoahai: { name:"Họa Hại", element:"Thổ", group:"hung", src:"web",
+    theme:"Thị phi - Khẩu thiệt - Kiện tụng",
+    pairs:["17","71","89","98","46","64","23","32"],
+    pros:"Ăn nói khéo, phản ứng nhanh, có tài hùng biện và thuyết phục, đầu óc linh hoạt.",
+    cons:"Họa từ miệng mà ra: dễ vướng thị phi, khẩu thiệt, tranh cãi, kiện tụng, bị tiểu nhân đặt điều. Lời nói nóng nảy làm hỏng việc và hỏng quan hệ.",
+    money:"Tài vận lên xuống vì lời nói và tranh chấp, dễ hao tiền vào kiện cáo, đền bù, những chuyện không đâu.",
+    career:"Hợp việc cần ăn nói nhưng phải giữ miệng: càng nổi tiếng càng dễ thị phi.",
+    love:"Dễ cãi vã, hiểu lầm vì lời nói, hôn nhân cần nhường nhịn khi giao tiếp.",
+    health:"Theo quan niệm BCLS: chú ý bệnh về miệng, họng, đường hô hấp, răng miệng và bệnh vặt dai dẳng.",
+    quynhan:"Ít quý nhân, nhiều tiểu nhân do thị phi.",
+    advice:"Nội dung bổ sung từ nguồn BCLS phổ biến (tài liệu gốc chưa có mục này). Họa Hại được Sinh Khí chế hóa. Nguyên tắc sống còn: nghĩ kỹ trước khi nói, tránh tranh chấp và giấy tờ kiện tụng." },
+  nguquy: { name:"Ngũ Quỷ", element:"Hỏa", group:"hung", src:"mixed",
+    theme:"Biến động - Thông minh - Đa nghi - Không giữ được tiền",
+    pairs:["18","81","79","97","36","63","24","42"],
+    pros:"Đầu óc nhanh, nhiều ý tưởng, giỏi biến hóa và ứng biến. Hợp nghệ thuật, công việc đa dạng, công ty thương mại, việc thay đổi thường xuyên, buôn bán, tâm linh tôn giáo (theo tài liệu).",
+    cons:"Đa nghi, không tin tưởng ai, không tâm sự với ai, hay giấu kín cô độc. Tính cách hay thay đổi, cảm giác bất an thường trực.",
+    money:"Khả năng giữ tiền ở vị trí thứ 8 - kém nhất trong 8 từ trường: tiêu tốn rất nhiều tiền và có thể mất tiền ngay lập tức, phải sử dụng hết sức hợp lý.",
+    career:"Hợp công việc biến động, nhiều thay đổi; không hợp việc cần ổn định lâu dài một chỗ.",
+    love:"Hay thay đổi, hay có tình tay ba, dễ ngoại tình, ly hôn. Chưa có đối tượng thì luôn chờ mong nhưng xem tình yêu là bất ổn, chỉ cần một chút bất an là buông tay. Đang yêu thì luôn trong tâm thế sẵn sàng chia tay. Đã kết hôn thì cần coi chừng chuyện ngoài giá thú, phải quan tâm đối phương đúng lúc đúng chỗ.",
+    health:"Chất lượng giấc ngủ kém, hay thức khuya dẫn đến vấn đề máu huyết, tim, tuần hoàn máu, tai nạn xe cộ bất ngờ. Bệnh dễ bộc phát và khi phát thì nặng. Tài liệu còn lưu ý: năng lượng Ngũ Quỷ cao đi cùng Tuyệt Mệnh dễ bị ung thư.",
+    quynhan:"Vì bản tính hay nghi ngờ, không tin người nên rất thiếu quý nhân.",
+    advice:"Ngũ Quỷ ở đuôi là xấu nhất của từ trường này: không tụ giữ được tiền tài, hôn nhân xấu, dùng lâu hoặc năng lượng quá mạnh có nguy cơ ly hôn. Ngũ Quỷ được Phục Vị chế hóa.",
+    withZero:"Ngũ Quỷ có 0: suy nghĩ tiêu cực, buồn phiền, bị động, tai ương do người khác mang đến, dễ bị tai họa." },
+  lucsat: { name:"Lục Sát", element:"Thủy", group:"hung", src:"mixed",
+    theme:"Nữ nhân - Giao tiếp - Tình cảm - Đa cảm",
+    pairs:["16","61","74","47","38","83","92","29"],
+    pros:"Rất thông minh khéo léo, kinh nghiệm bản thân tốt, hòa đồng, cao thủ quan hệ xã hội, giỏi giao tiếp, tiếp đãi và thiết lập mối quan hệ. Gu thẩm mỹ cao, tư duy tinh tế tỉ mỉ, giàu tình cảm, nhân duyên tốt. Nam thì có sức hút mạnh với phái nữ, nữ thường xinh đẹp, ôn nhu.",
+    cons:"Nhạy cảm, đa nghi, thích tưởng tượng và suy diễn, không quyết đoán, hay do dự so đo. Năng lực chịu đựng kém, dễ u buồn, nặng thì rơi vào trạng thái rất tiêu cực. Quá thận trọng, thích ăn diện làm đẹp. Nữ mà nhiều Lục Sát thì đỏng đảnh, đa sầu đa cảm, hay u buồn.",
+    money:"Dựa vào mối quan hệ để kiếm tiền tốt, nhưng tiêu tiền cho gia đình và cũng không giữ được tiền.",
+    career:"Mạnh về giao tiếp, ngoại giao, thẩm mỹ, dịch vụ khách hàng.",
+    love:"Đào hoa, nhân duyên nhiều nhưng tình cảm dễ rối vì đa cảm và suy diễn (phần chi tiết trong tài liệu gốc bị thiếu, đây là nội dung bổ sung phổ biến).",
+    health:"Dễ mất ngủ, suy nghĩ nhiều, tinh thần bất an (nội dung bổ sung phổ biến).",
+    quynhan:"Quan hệ xã hội rộng nhưng quý nhân thực chất không nhiều.",
+    advice:"Lục Sát được Diên Niên chế hóa. Điểm cần sửa nhất là bớt suy diễn và học cách quyết đoán." },
+  tuyetmenh: { name:"Tuyệt Mệnh", element:"Kim", group:"hung", src:"web",
+    theme:"Phá tài - Mạo hiểm - Quyết liệt",
+    pairs:["12","21","69","96","48","84","37","73"],
+    pros:"Quyết đoán, dám nghĩ dám làm, ra quyết định nhanh, có tố chất tạo đột phá. Nếu kiểm soát được rủi ro, đầu tư mạo hiểm có lúc thắng lớn.",
+    cons:"Chủ phá tài: đầu tư liều lĩnh dễ lỗ nặng, tiền vào nhanh ra nhanh, biến động cực đoan. Tính nóng, cực đoan, khó dừng lại khi đang đà thua.",
+    money:"Nguy cơ phá tài cao nhất trong 8 từ trường, đặc biệt khi Tuyệt Mệnh ở đuôi số hoặc đi cùng Họa Hại (đầu tư thất bại, theo tài liệu).",
+    career:"Chỉ hợp việc mạo hiểm có tính toán; việc cần bền vững, tích lũy thì rất bất lợi.",
+    love:"Tình cảm, hôn nhân dễ trắc trở, cực đoan khi yêu ghét (nội dung bổ sung phổ biến).",
+    health:"Theo quan niệm BCLS: cần chú ý bệnh nặng và biến cố bất ngờ; đi cùng Ngũ Quỷ mạnh là tổ hợp tài liệu cảnh báo kỹ nhất.",
+    quynhan:"Ít quý nhân, dễ gặp người rủ rê đầu tư mạo hiểm.",
+    advice:"Nội dung bổ sung từ nguồn BCLS phổ biến (tài liệu gốc chưa có mục này; ngũ hành có nguồn ghi Kim, có nguồn ghi Mộc). Tuyệt Mệnh được Thiên Y chế hóa. Tuyệt đối tránh để Tuyệt Mệnh ở đuôi số." }
+};
+/* Mat trai khi 1 tu truong lap qua nhieu (tu 3 lan tro len) - chu yeu lay tu tai lieu */
+const OVERUSE = {
+  thieny:"Không phải cứ nhiều Thiên Y là tốt: tài liệu dặn người dùng nhiều Thiên Y dễ lao tâm khổ tứ kiếm tiền mà quên hưởng thụ, về lâu dài dễ phát sinh vấn đề huyết áp và tuần hoàn máu; tính hào phóng quá mức cũng dễ bị lừa tiền, và chọn sai còn ảnh hưởng hôn nhân.",
+  diennien:"Diên Niên càng mạnh thì chức vụ và áp lực càng lớn: dễ lao lực, cực khổ, cô độc vì ít quý nhân; cái tôi, tính gia trưởng và cố chấp cũng nặng thêm, khó hòa hợp với người khác.",
+  sinhkhi:"Tài liệu ghi rõ: năng lượng Sinh Khí quá mạnh và dài dễ làm người ta sống trong vùng an toàn, lười, thiếu chí tiến thủ, thiếu động lực và tính cạnh tranh. Nên có Thiên Y hoặc Diên Niên đi kèm để kéo lên.",
+  phucvi:"Khi có quá nhiều Phục Vị, người ta dễ trở nên bảo thủ, cố chấp, lo âu và thiếu cảm giác an toàn; chờ đợi quá lâu làm mất cơ hội, công việc trì trệ không bứt phá được.",
+  hoahai:"Họa Hại lặp nhiều: thị phi, khẩu thiệt và tranh cãi chồng chất, dễ vướng kiện tụng liên miên, quan hệ bị bào mòn vì lời nói (nội dung bổ sung theo BCLS phổ biến).",
+  nguquy:"Tài liệu ghi Ngũ Quỷ năng lượng quá mạnh thì không tụ giữ được tiền tài, hôn nhân xấu, dùng lâu có nguy cơ ly hôn; tính đa nghi và bất an cũng nặng thêm.",
+  lucsat:"Theo tài liệu, nhiều Lục Sát làm cảm xúc lên xuống mạnh: nữ thì đỏng đảnh, đa sầu đa cảm, hay u buồn; năng lực chịu đựng kém, tình cảm càng dễ rối.",
+  tuyetmenh:"Tuyệt Mệnh lặp nhiều: phá tài ở mức cực đoan, đầu tư liều lĩnh nối tiếp nhau, biến động lớn về cả tiền bạc lẫn sức khỏe (nội dung bổ sung theo BCLS phổ biến)."
+};
+const PAIR2FIELD = {};
+Object.keys(FIELDS).forEach(k=>{
+  FIELDS[k].pairs.forEach((p,idx)=>{ PAIR2FIELD[p] = { key:k, level: Math.floor(idx/2) }; });
+});
+/* level 0 = manh nhat (diem 4) ... level 3 = yeu nhat (diem 1) */
+function strengthOf(level){ return 4 - level; }
+
+/* ============ TRAC NGHIEM LUYEN 64 CAP ============ */
+function shuffleArr(arr, rand){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(rand()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+function makePairQuestion(rand){
+  rand = rand||Math.random;
+  const keys=Object.keys(FIELDS);
+  const correctKey=keys[Math.floor(rand()*keys.length)];
+  const pairs=FIELDS[correctKey].pairs;
+  const pair=pairs[Math.floor(rand()*pairs.length)];
+  const others=shuffleArr(keys.filter(k=>k!==correctKey), rand).slice(0,3);
+  const options=shuffleArr([correctKey].concat(others), rand);
+  return {kind:"pair", pair, correctKey, options};
+}
+function makeFieldQuestion(rand){
+  rand = rand||Math.random;
+  const keys=Object.keys(FIELDS);
+  const fieldKey=keys[Math.floor(rand()*keys.length)];
+  const pairs=FIELDS[fieldKey].pairs;
+  const correctPair=pairs[Math.floor(rand()*pairs.length)];
+  const otherPairs=[];
+  const otherKeys=shuffleArr(keys.filter(k=>k!==fieldKey), rand);
+  for(const k of otherKeys){
+    if(otherPairs.length>=3) break;
+    const ps=FIELDS[k].pairs;
+    otherPairs.push(ps[Math.floor(rand()*ps.length)]);
+  }
+  const options=shuffleArr([correctPair].concat(otherPairs), rand);
+  return {kind:"field", fieldKey, correctPair, options};
+}
+
+/* ============ TRANG THAI ============ */
+let curType = "sim", curMethod = "ktc";
+const $ = id => document.getElementById(id);
+
+document.querySelectorAll("nav button").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    $("tab-"+b.dataset.tab).classList.add("active");
+    if(b.dataset.tab==="lichsu") renderHistory();
+  });
+});
+function segWire(id, attr, cb){
+  $(id).querySelectorAll("button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      $(id).querySelectorAll("button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active"); cb(b.dataset[attr]);
+    });
+  });
+}
+segWire("segType","type", v=>curType=v);
+segWire("segMethod","method", v=>{
+  curMethod=v;
+  document.querySelectorAll("#segMethodKH button").forEach(b=>b.classList.toggle("active", b.dataset.method===v));
+  document.querySelectorAll("#segMethodCS button").forEach(b=>b.classList.toggle("active", b.dataset.method===v));
+});
+
+/* ============ THUAT TOAN CHIA CAP ============ */
+function cleanNumber(raw){
+  let d = String(raw||"").replace(/\D/g,"");
+  if(d.length===11 && d.startsWith("84")) d = "0"+d.slice(2);
+  return d;
+}
+/* Cach truot lien ke: cap cac so ke nhau */
+function splitSliding(d){
+  const out=[];
+  for(let i=0;i<d.length-1;i++){
+    const pair=d[i]+d[i+1];
+    const hit=PAIR2FIELD[pair];
+    if(hit) out.push({pair, key:hit.key, level:hit.level, mod:null, pos:i});
+    else out.push({pair, key:null, level:null, mod:null, pos:i});
+  }
+  return out;
+}
+/* Cach Kim Tam Cat: bo 0/5 ghep cap that, ghi nhan 0/5 nam giua 2 so that */
+function splitKTC(d){
+  const reals=[]; // {digit, modsBefore:[...]}
+  let pending=[];
+  for(let i=0;i<d.length;i++){
+    const ch=d[i];
+    if(ch==="0"||ch==="5"){ pending.push(ch); }
+    else { reals.push({digit:ch, modsBefore:pending, pos:i}); pending=[]; }
+  }
+  const leadingMods = reals.length? reals[0].modsBefore : pending;
+  const trailingMods = pending;
+  const out=[];
+  for(let k=0;k<reals.length-1;k++){
+    const pair=reals[k].digit+reals[k+1].digit;
+    const hit=PAIR2FIELD[pair];
+    const mods=reals[k+1].modsBefore;
+    let mod=null;
+    if(mods.includes("0")&&mods.includes("5")) mod="05";
+    else if(mods.includes("0")) mod="0";
+    else if(mods.includes("5")) mod="5";
+    out.push({pair, key:hit?hit.key:null, level:hit?hit.level:null, mod, pos:reals[k].pos, endPos:reals[k+1].pos});
+  }
+  return {pairs:out, leadingMods, trailingMods};
+}
+
+/* ============ PHAN TICH ============ */
+const COMBOS_SEQ = [
+  {seq:["tuyetmenh","hoahai"], cls:"bad", text:"Tuyệt Mệnh thêm Họa Hại: theo tài liệu, đầu tư sẽ thất bại."},
+  {seq:["tuyetmenh","lucsat"], cls:"note", text:"Tuyệt Mệnh thêm Lục Sát: theo tài liệu, đào hoa khắp thiên hạ."},
+  {seq:["hoahai","tuyetmenh"], cls:"bad", text:"Họa Hại thêm Tuyệt Mệnh: theo tài liệu, dễ vướng kiện tụng (luật sư sẽ vui mừng)."},
+  {seq:["lucsat","tuyetmenh"], cls:"bad", text:"Lục Sát thêm Tuyệt Mệnh: theo tài liệu, tính tình nhất định xấu."}
+];
+const CHEHOA = [
+  {cat:"thieny", hung:"tuyetmenh", text:"Thiên Y chế hóa được Tuyệt Mệnh: năng lượng tài lộc và quý nhân đỡ được phần phá tài, quyết liệt."},
+  {cat:"sinhkhi", hung:"hoahai", text:"Sinh Khí chế hóa được Họa Hại: quý nhân và sự vui vẻ đỡ được thị phi, khẩu thiệt."},
+  {cat:"diennien", hung:"lucsat", text:"Diên Niên chế hóa được Lục Sát: sự kiên định và trách nhiệm đỡ được phần đa cảm, do dự."},
+  {cat:"phucvi", hung:"nguquy", text:"Phục Vị chế hóa được Ngũ Quỷ: sự ổn định và kiên nhẫn đỡ được phần biến động, đa nghi."}
+];
+function analyze(digits, method){
+  let pairs, leadingMods=[], trailingMods=[];
+  if(method==="truot"){ pairs = splitSliding(digits); }
+  else { const r = splitKTC(digits); pairs=r.pairs; leadingMods=r.leadingMods; trailingMods=r.trailingMods; }
+  let score=0, catPts=0, hungPts=0, nCat=0, nHung=0, nNone=0;
+  const counts={};
+  pairs.forEach(p=>{
+    if(!p.key){ nNone++; return; }
+    counts[p.key]=(counts[p.key]||0)+1;
+    let pts = strengthOf(p.level);
+    if(p.mod==="0") pts = pts*0.5;
+    else if(p.mod==="5") pts = pts*1.5;
+    else if(p.mod==="05") pts = pts*1.0;
+    p.pts = pts;
+    if(FIELDS[p.key].group==="cat"){ score+=pts; catPts+=pts; nCat++; }
+    else { score-=pts; hungPts+=pts; nHung++; }
+  });
+  const totalPairs = pairs.length;
+  const avg = totalPairs? score/totalPairs : 0;
+  let verdict;
+  if(!totalPairs || (nCat===0&&nHung===0)) verdict="Chưa đủ cặp số để luận";
+  else if(avg>=1.2) verdict="CÁT - Vượng";
+  else if(avg>=0.4) verdict="Khá cát";
+  else if(avg>-0.4) verdict="Trung tính - cát hung lẫn lộn";
+  else if(avg>-1.2) verdict="Thiên hung";
+  else verdict="HUNG - Nặng";
+  /* duoi so */
+  const tailAlerts=[];
+  const lastDigit = digits[digits.length-1];
+  const lastTwo = digits.slice(-2);
+  if(lastDigit==="0") tailAlerts.push({cls:"bad", text:"Đuôi số là 0: theo tài liệu, đây là điểm rất xấu - mọi thứ dễ trở về 0, phá mất tiền tài, hôn nhân xấu."});
+  else if(lastTwo==="05") tailAlerts.push({cls:"bad", text:"Đuôi số là 05: theo nguyên tắc Kim Tâm Cát, đuôi 05 cũng bị cảnh báo nặng như đuôi 0."});
+  const lastReal = [...pairs].reverse().find(p=>p.key);
+  if(lastReal){
+    const lf = FIELDS[lastReal.key];
+    if(lf.group==="hung") tailAlerts.push({cls:"bad", text:"Cặp chốt đuôi là "+lf.name+" ("+lastReal.pair+"): hung tinh nằm ở vị trí chốt của cả dãy, cần đặc biệt lưu ý."});
+    else tailAlerts.push({cls:"good", text:"Cặp chốt đuôi là "+lf.name+" ("+lastReal.pair+"): cát tinh chốt đuôi, được coi là giữ được thành quả."});
+  }
+  /* to hop lien tiep */
+  const seqKeys = pairs.filter(p=>p.key).map(p=>p.key);
+  const comboAlerts=[];
+  for(let i=0;i<seqKeys.length-1;i++){
+    COMBOS_SEQ.forEach(c=>{
+      if(seqKeys[i]===c.seq[0]&&seqKeys[i+1]===c.seq[1]) comboAlerts.push({cls:c.cls, text:c.text});
+    });
+  }
+  if(counts["nguquy"]&&counts["tuyetmenh"]) comboAlerts.push({cls:"bad", text:"Ngũ Quỷ đi cùng Tuyệt Mệnh trong cùng dãy: tài liệu cảnh báo đây là tổ hợp nặng về sức khỏe, cần kiểm tra sức khỏe định kỳ và sống điều độ."});
+  if(counts["thieny"]&&counts["phucvi"]) comboAlerts.push({cls:"good", text:"Thiên Y đi cùng Phục Vị: theo tài liệu, giác quan thứ sáu rất mạnh, trực giác tốt."});
+  CHEHOA.forEach(c=>{
+    if(counts[c.cat]&&counts[c.hung]) comboAlerts.push({cls:"good", text:c.text});
+  });
+  /* so tu quy */
+  const run = digits.match(/(\d)\1{3,}/);
+  if(run) comboAlerts.push({cls:"note", text:"Có dãy "+run[0]+" (từ 4 số giống nhau liên tiếp): theo tài liệu mục Phục Vị, chủ công việc trì trệ, không bứt phá dù cố gắng, tính bảo thủ."});
+  /* qua muc: 1 tu truong lap tu 3 lan, hoac chay lien nhau tu 3 cap */
+  const overuse=[];
+  const runMap={};
+  let curKey=null, curRun=0;
+  seqKeys.forEach(k=>{
+    if(k===curKey) curRun++; else { curKey=k; curRun=1; }
+    runMap[k]=Math.max(runMap[k]||0, curRun);
+  });
+  Object.keys(counts).forEach(k=>{
+    const c=counts[k], rn=runMap[k]||0;
+    if(c>=3 || rn>=3){
+      const f=FIELDS[k];
+      const text = rn>=3
+        ? f.name+" xuất hiện liền nhau tới "+rn+" cặp liên tiếp (tổng "+c+" lần trong dãy). "+OVERUSE[k]
+        : f.name+" lặp lại "+c+" lần trong dãy. "+OVERUSE[k];
+      const item={key:k, count:c, run:rn, cls:(f.group==="hung"?"bad":"note"), text};
+      overuse.push(item);
+      comboAlerts.push({cls:item.cls, text:item.text});
+    }
+  });
+  if(method==="ktc"){
+    if(trailingMods.includes("0")) comboAlerts.push({cls:"bad", text:"Sau số thật cuối cùng còn số 0: phần năng lượng chốt bị triệt tiêu, giống cảnh báo đuôi 0."});
+    if(pairs.some(p=>p.mod==="5"&&p.key&&FIELDS[p.key].group==="hung")) comboAlerts.push({cls:"note", text:"Có hung tinh được số 5 tăng cường: mặt xấu của hung tinh đó sẽ bộc phát mạnh và rõ hơn."});
+    if(pairs.some(p=>p.mod==="0"&&p.key&&FIELDS[p.key].group==="cat")) comboAlerts.push({cls:"note", text:"Có cát tinh bị số 0 làm ẩn: cái tốt có nhưng bị kẹt, khó phát huy ra ngoài."});
+  }
+  return {digits, method, pairs, score, avg, verdict, counts, nCat, nHung, nNone, catPts, hungPts, tailAlerts, comboAlerts, overuse};
+}
+/* ============ DONG NANG LUONG CUA DAY SO ============ */
+/* Diem tich luy theo tung cap (cat cong, hung tru), chia 3 doan Dau - Giua - Cuoi,
+   xet xu huong van trinh di len hay di xuong ve cuoi day. */
+function flowData(r){
+  const deltas = r.pairs.map(p=>{
+    if(!p.key || p.pts===undefined) return 0;
+    return FIELDS[p.key].group==="cat"? p.pts : -p.pts;
+  });
+  const series=[0];
+  deltas.forEach(d=>series.push(series[series.length-1]+d));
+  const n=r.pairs.length;
+  const segNames=["Đoạn đầu","Đoạn giữa","Đoạn cuối"];
+  const segments=segNames.map((name,i)=>({name, sum:0, count:0}));
+  deltas.forEach((d,i)=>{
+    const s = n? Math.min(2, Math.floor(i*3/n)) : 0;
+    segments[s].sum+=d; segments[s].count++;
+  });
+  const first=segments[0], last=segments[segments.length-1];
+  const diff = last.sum - first.sum;
+  let trend, trendText;
+  if(diff>=2){ trend="up"; trendText="Vận trình đi lên về cuối: đoạn cuối mạnh hơn đoạn đầu - càng dùng lâu, vận càng mở ra."; }
+  else if(diff<=-2){ trend="down"; trendText="Vận trình đi xuống về cuối: đoạn đầu mạnh hơn đoạn cuối - khởi đầu tốt nhưng hậu vận đuối dần, cần đặc biệt chú ý phần đuôi số."; }
+  else { trend="flat"; trendText="Vận trình khá đều: ba đoạn chênh nhau không nhiều, không có đoạn nào sụp hẳn cũng không có đoạn nào bứt phá rõ."; }
+  const best = segments.reduce((a,b)=> b.sum>a.sum? b:a, segments[0]);
+  const worst = segments.reduce((a,b)=> b.sum<a.sum? b:a, segments[0]);
+  return {deltas, series, segments, diff, trend, trendText, best, worst, final: series[series.length-1]};
+}
+
+/* ============ CHAM DIEM THEO LINH VUC ============ */
+/* He so anh huong cua tung tu truong len tung linh vuc, tu -2 (rat xau) den +2 (rat tot),
+   dat theo "chu ve" va noi dung luan trong tai lieu. VD Thien Y chu tien tai nen Tai van +2;
+   Dien Nien la cat tinh nhung tai lieu ghi nhieu benh vat nen Suc khoe -1;
+   Luc Sat hung tinh nhung gioi quan he xa hoi nen Quy nhan +1, Tinh cam -2. */
+const DOMAINS = [
+  {key:"taivan", name:"Tài vận"},
+  {key:"sunghiep", name:"Sự nghiệp"},
+  {key:"tinhcam", name:"Tình cảm - Hôn nhân"},
+  {key:"suckhoe", name:"Sức khỏe"},
+  {key:"quynhan", name:"Quý nhân - Quan hệ"}
+];
+const FIELD_DOMAIN = {
+  thieny:   {taivan:2, sunghiep:2, tinhcam:2, suckhoe:1, quynhan:2},
+  diennien: {taivan:1, sunghiep:2, tinhcam:1, suckhoe:-1, quynhan:-1},
+  sinhkhi:  {taivan:1, sunghiep:1, tinhcam:2, suckhoe:1, quynhan:2},
+  phucvi:   {taivan:0, sunghiep:1, tinhcam:-1, suckhoe:-1, quynhan:1},
+  hoahai:   {taivan:-1, sunghiep:-2, tinhcam:-1, suckhoe:-1, quynhan:-2},
+  nguquy:   {taivan:-2, sunghiep:-1, tinhcam:-2, suckhoe:-2, quynhan:-2},
+  lucsat:   {taivan:-1, sunghiep:0, tinhcam:-2, suckhoe:-1, quynhan:1},
+  tuyetmenh:{taivan:-2, sunghiep:-1, tinhcam:-1, suckhoe:-2, quynhan:-1}
+};
+function domainLabel(pct){
+  if(pct>=70) return "Mạnh - rất thuận";
+  if(pct>=56) return "Khá - thuận";
+  if(pct>=45) return "Trung tính";
+  if(pct>=31) return "Yếu - cần lưu ý";
+  return "Kém - điểm nghẽn";
+}
+function domainScores(r){
+  const n = r.nCat + r.nHung;
+  if(!n) return null;
+  return DOMAINS.map(d=>{
+    let raw=0;
+    const contrib={};
+    r.pairs.forEach(p=>{
+      if(!p.key || p.pts===undefined) return;
+      const c = FIELD_DOMAIN[p.key][d.key] || 0;
+      if(!c) return;
+      const v = p.pts * c;
+      raw += v;
+      contrib[p.key] = (contrib[p.key]||0) + v;
+    });
+    const avg = raw / n;
+    const pct = Math.max(0, Math.min(100, Math.round(50 + avg*6.25)));
+    const entries = Object.keys(contrib).map(k=>({key:k, val:contrib[k]}));
+    const pos = entries.filter(e=>e.val>0).sort((a,b)=>b.val-a.val)[0] || null;
+    const neg = entries.filter(e=>e.val<0).sort((a,b)=>a.val-b.val)[0] || null;
+    return {key:d.key, name:d.name, raw, avg, pct, label:domainLabel(pct), pos, neg};
+  });
+}
+
+/* ============ LUAN KET HOP CCCD + SIM ============ */
+function fieldPoints(r, key){
+  let s=0;
+  r.pairs.forEach(p=>{ if(p.key===key && p.pts!==undefined) s+=p.pts; });
+  return s;
+}
+function comboAnalyze(cccdDigits, simDigits, method){
+  const menh = analyze(cccdDigits, method);
+  const sim = analyze(simDigits, method);
+  const hungKeys = Object.keys(FIELDS).filter(k=>FIELDS[k].group==="hung");
+  const catKeys = Object.keys(FIELDS).filter(k=>FIELDS[k].group==="cat");
+  /* hung tinh co trong menh, sap xep nang truoc */
+  const hungInMenh = hungKeys.filter(k=>menh.counts[k])
+    .map(k=>({key:k, count:menh.counts[k], pts:fieldPoints(menh,k)}))
+    .sort((a,b)=>b.pts-a.pts);
+  const catInMenh = catKeys.filter(k=>menh.counts[k])
+    .map(k=>({key:k, count:menh.counts[k], pts:fieldPoints(menh,k)}))
+    .sort((a,b)=>b.pts-a.pts);
+  /* che hoa: hung menh -> cat trong SIM */
+  const chehoa = hungInMenh.map(h=>{
+    const rule = CHEHOA.find(c=>c.hung===h.key);
+    const ctrlKey = rule? rule.cat : null;
+    const ctrlCount = ctrlKey? (sim.counts[ctrlKey]||0) : 0;
+    const ctrlPts = ctrlKey? fieldPoints(sim, ctrlKey) : 0;
+    let level="none";
+    if(ctrlCount>0) level = (ctrlPts>=h.pts)? "strong" : "partial";
+    return {hung:h.key, hungPts:h.pts, hungCount:h.count, ctrl:ctrlKey, ctrlCount, ctrlPts, level};
+  });
+  const chehoaOk = chehoa.filter(c=>c.level!=="none");
+  /* cong huong */
+  const congHuongHung = hungKeys.filter(k=>menh.counts[k]&&sim.counts[k])
+    .map(k=>({key:k, menhCount:menh.counts[k], simCount:sim.counts[k]}));
+  const congHuongCat = catKeys.filter(k=>menh.counts[k]&&sim.counts[k])
+    .map(k=>({key:k, menhCount:menh.counts[k], simCount:sim.counts[k]}));
+  /* SIM bo khuyet: cat co trong SIM nhung menh khong co */
+  const simBoKhuyet = catKeys.filter(k=>sim.counts[k]&&!menh.counts[k]);
+  /* diem hop menh */
+  const compat = sim.avg + 0.4*chehoaOk.length - 0.5*congHuongHung.length + 0.2*congHuongCat.length;
+  let verdict;
+  if(compat>=1.2) verdict="Rất hợp mệnh";
+  else if(compat>=0.4) verdict="Hợp mệnh";
+  else if(compat>-0.4) verdict="Bình thường - chưa phát huy";
+  else if(compat>-1.2) verdict="Chưa hợp mệnh";
+  else verdict="Khắc mệnh - nên cân nhắc đổi số";
+  /* goi y */
+  const suggestions=[];
+  chehoa.filter(c=>c.level==="none").forEach(c=>{
+    suggestions.push("Mệnh đang có "+FIELDS[c.hung].name+" nhưng SIM chưa có "+FIELDS[c.ctrl].name+" để chế hóa. Nếu chọn SIM khác, ưu tiên dãy có cặp "+FIELDS[c.ctrl].name+" ("+FIELDS[c.ctrl].pairs.slice(0,4).join(", ")+"...).");
+  });
+  chehoa.filter(c=>c.level==="partial").forEach(c=>{
+    suggestions.push(FIELDS[c.ctrl].name+" trong SIM còn yếu hơn "+FIELDS[c.hung].name+" trong mệnh ("+c.ctrlPts.toFixed(1)+" điểm so với "+c.hungPts.toFixed(1)+" điểm): chế hóa được một phần, nếu được hãy chọn SIM có "+FIELDS[c.ctrl].name+" mạnh hơn, ở gần đuôi càng tốt.");
+  });
+  congHuongHung.forEach(c=>{
+    suggestions.push("Tránh để "+FIELDS[c.key].name+" xuất hiện thêm trong SIM vì mệnh đã có sẵn, cộng hưởng sẽ nặng thêm.");
+  });
+  sim.tailAlerts.filter(a=>a.cls==="bad").forEach(a=>suggestions.push("Về chính dãy SIM: "+a.text));
+  (menh.overuse||[]).forEach(o=>suggestions.push("Về mệnh (CCCD): "+o.text));
+  (sim.overuse||[]).forEach(o=>suggestions.push("Về dãy SIM: "+o.text));
+  if(!suggestions.length) suggestions.push("Cấu trúc hiện tại khá ổn: hung trong mệnh đã được chế hóa, không có cộng hưởng xấu đáng kể. Cứ giữ số này và dùng lâu dài để hậu thiên phát huy.");
+  return {menh, sim, hungInMenh, catInMenh, chehoa, congHuongHung, congHuongCat, simBoKhuyet, compat, verdict, suggestions};
+}
+/* ============ LUAN HANG LOAT - XEP HANG CHON SIM ============ */
+/* priorityKey: "" = tong the; hoac key linh vuc (taivan, sunghiep, tinhcam, suckhoe, quynhan) */
+function rankBatch(numbers, method, cccdDigits, priorityKey){
+  const items = numbers.map(digits=>{
+    const r = analyze(digits, method);
+    const ds = domainScores(r);
+    const combo = cccdDigits? comboAnalyze(cccdDigits, digits, method) : null;
+    const tailBad = r.tailAlerts.some(a=>a.cls==="bad");
+    let primary, secondary;
+    if(priorityKey && ds){
+      const d = ds.find(x=>x.key===priorityKey);
+      primary = d? d.pct : 0;
+      secondary = combo? combo.compat : r.avg;
+    } else {
+      primary = combo? combo.compat : r.avg;
+      secondary = r.avg;
+    }
+    return {digits, r, ds, combo, tailBad, primary, secondary};
+  });
+  items.sort((a,b)=> (b.primary-a.primary) || (b.secondary-a.secondary));
+  return items;
+}
+</script>
+<script>
+"use strict";
+/* ============ HIEN THI DIEM LINH VUC ============ */
+function domainHTML(r, title){
+  const ds = domainScores(r);
+  if(!ds) return "";
+  let h='<div class="card"><h2>'+esc(title||"Chấm điểm theo lĩnh vực")+'</h2>';
+  ds.forEach(d=>{
+    const color = d.pct>=56 ? "var(--cat)" : (d.pct>=45 ? "var(--warn)" : "var(--hung)");
+    h+='<div class="drow"><div class="dhead"><span>'+esc(d.name)+'</span><span class="dpct">'+d.pct+'/100 - '+esc(d.label)+'</span></div>';
+    h+='<div class="dbar"><div style="width:'+d.pct+'%; background:'+color+'"></div></div>';
+    let note=[];
+    if(d.pos) note.push("Được đỡ bởi "+FIELDS[d.pos.key].name+" (+"+d.pos.val.toFixed(1)+")");
+    if(d.neg) note.push("Bị kéo xuống bởi "+FIELDS[d.neg.key].name+" ("+d.neg.val.toFixed(1)+")");
+    if(note.length) h+='<div class="dnote">'+esc(note.join(". "))+'</div>';
+    h+="</div>";
+  });
+  h+='<p class="hint">Điểm lĩnh vực tính từ hệ số ảnh hưởng của từng từ trường (theo mục chủ về trong tài liệu), nhân với điểm năng lượng của từng cặp. 50 là trung tính.</p></div>';
+  return h;
+}
+
+/* ============ HIEN THI DONG NANG LUONG ============ */
+function flowHTML(r, title){
+  const fd = flowData(r);
+  if(!r.pairs.length) return "";
+  const W=340, H=130, PADX=16, PADTOP=14, PADBOT=22;
+  const minV=Math.min(0, ...fd.series), maxV=Math.max(0, ...fd.series);
+  const range=(maxV-minV)||1;
+  const xAt=i=> PADX + (W-2*PADX) * (fd.series.length<=1? 0.5 : i/(fd.series.length-1));
+  const yAt=v=> PADTOP + (maxV-v)/range*(H-PADTOP-PADBOT);
+  const pts = fd.series.map((v,i)=>xAt(i).toFixed(1)+","+yAt(v).toFixed(1)).join(" ");
+  let dots="";
+  fd.series.forEach((v,i)=>{
+    let fill="#e8b64c";
+    if(i>0){ const d=fd.deltas[i-1]; fill = d>0? "#2fbf71" : (d<0? "#ef5350" : "#888"); }
+    dots+='<circle cx="'+xAt(i).toFixed(1)+'" cy="'+yAt(v).toFixed(1)+'" r="3.4" fill="'+fill+'" stroke="#17102b" stroke-width="1"/>';
+  });
+  const segLabel = s => s.sum>0.5? "cát trội" : (s.sum<-0.5? "hung trội" : "lẫn lộn");
+  let h='<div class="card"><h2>'+esc(title||"Dòng năng lượng của dãy số")+'</h2>';
+  h+='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%; height:auto; background:#1c1236; border-radius:10px" role="img" aria-label="Biểu đồ dòng năng lượng">'
+    +'<line x1="'+PADX+'" y1="'+yAt(0).toFixed(1)+'" x2="'+(W-PADX)+'" y2="'+yAt(0).toFixed(1)+'" stroke="#8f83b8" stroke-width="1" stroke-dasharray="4 4"/>'
+    +'<polyline points="'+pts+'" fill="none" stroke="#e8b64c" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>'
+    +dots
+    +'<text x="'+PADX+'" y="'+(H-6)+'" fill="#b9aede" font-size="9">Bắt đầu</text>'
+    +'<text x="'+(W-PADX)+'" y="'+(H-6)+'" fill="#b9aede" font-size="9" text-anchor="end">Kết thúc: '+(fd.final>0?"+":"")+fd.final.toFixed(1)+' điểm</text>'
+    +'</svg>';
+  h+='<div class="grid8" style="grid-template-columns:1fr 1fr 1fr; margin-top:10px">';
+  fd.segments.forEach(s=>{
+    const col = s.sum>0.5? "#7be495" : (s.sum<-0.5? "#ff9d9a" : "var(--gold2)");
+    h+='<div style="background:#1c1236; border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:9px 10px; text-align:center"><div style="font-size:12.5px; color:var(--muted)">'+esc(s.name)+'</div><div style="font-weight:800; font-size:17px; color:'+col+'">'+(s.sum>0?"+":"")+s.sum.toFixed(1)+'</div><div style="font-size:12px; color:var(--muted)">'+segLabel(s)+'</div></div>';
+  });
+  h+="</div>";
+  const tcol = fd.trend==="up"? "#7be495" : (fd.trend==="down"? "#ff9d9a" : "var(--gold2)");
+  h+='<p class="kv" style="margin-top:10px"><b style="color:'+tcol+'">Xu hướng:</b> '+esc(fd.trendText)+'</p>';
+  h+='<p class="kv">Đoạn mạnh nhất là <b>'+esc(fd.best.name.toLowerCase())+'</b> ('+(fd.best.sum>0?"+":"")+fd.best.sum.toFixed(1)+' điểm), đoạn yếu nhất là <b>'+esc(fd.worst.name.toLowerCase())+'</b> ('+(fd.worst.sum>0?"+":"")+fd.worst.sum.toFixed(1)+' điểm). Đường càng đi lên phía trên vạch 0 thì vận càng sáng, chìm xuống dưới là đoạn hung áp đảo.</p>';
+  h+="</div>";
+  return h;
+}
+
+/* ============ HIEN THI KET QUA ============ */
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function srcTag(f){
+  if(f.src==="doc") return '<span class="src doc">Tài liệu</span>';
+  if(f.src==="web") return '<span class="src web">Bổ sung</span>';
+  return '<span class="src doc">Tài liệu</span><span class="src web">có bổ sung</span>';
+}
+function modText(p){
+  if(p.mod==="0") return "có 0 - bị ẩn, điểm giảm nửa";
+  if(p.mod==="5") return "có 5 - tăng cường, điểm nhân 1,5";
+  if(p.mod==="05") return "có cả 0 và 5 - ẩn và hiện lẫn nhau";
+  return "";
+}
+function fieldDetailHTML(key, open){
+  const f=FIELDS[key];
+  let h='<details class="field"'+(open?" open":"")+"><summary><span class=\"dot "+f.group+'"></span>'+esc(f.name)+srcTag(f)+'</summary><div class="fbody">';
+  h+='<p><b>Chủ về:</b> '+esc(f.theme)+'</p>';
+  h+='<p><b>Ngũ hành:</b> '+esc(f.element)+' &nbsp; <b>Nhóm:</b> '+(f.group==="cat"?"Cát tinh":"Hung tinh")+'</p>';
+  h+='<div class="pairchips">'+f.pairs.map(p=>"<span>"+p+"</span>").join("")+"</div>";
+  h+='<p><b>Ưu điểm:</b> '+esc(f.pros)+'</p>';
+  h+='<p><b>Nhược điểm:</b> '+esc(f.cons)+'</p>';
+  h+='<p><b>Tài vận:</b> '+esc(f.money)+'</p>';
+  h+='<p><b>Sự nghiệp:</b> '+esc(f.career)+'</p>';
+  h+='<p><b>Tình cảm:</b> '+esc(f.love)+'</p>';
+  h+='<p><b>Sức khỏe:</b> '+esc(f.health)+'</p>';
+  h+='<p><b>Quý nhân:</b> '+esc(f.quynhan)+'</p>';
+  h+='<p><b>Lời khuyên:</b> '+esc(f.advice)+'</p>';
+  if(f.withZero) h+='<p><b>Khi có số 0:</b> '+esc(f.withZero)+'</p>';
+  if(f.atTail) h+='<p><b>Khi ở đuôi:</b> '+esc(f.atTail)+'</p>';
+  h+="</div></details>";
+  return h;
+}
+function renderResult(r){
+  const typeLabel = curType==="sim"?"Số điện thoại (hậu thiên)":(curType==="cccd"?"Số CCCD (tiên thiên)":"Dãy số khác");
+  const methodLabel = r.method==="ktc"?"Kim Tâm Cát - cặp thật, xét 0 và 5":"Trượt liền kề";
+  let h='<div class="card">';
+  h+="<h2>Kết quả luận</h2>";
+  h+='<p class="hint" style="text-align:center">'+typeLabel+" - Cách chia: "+methodLabel+"</p>";
+  h+='<div class="digits">'+r.digits.split("").map(c=>"<span>"+c+"</span>").join("")+"</div>";
+  const vcolor = r.avg>=0.4 ? "var(--cat)" : (r.avg<=-0.4 ? "var(--hung)" : "var(--warn)");
+  h+='<div class="verdict"><div class="vlabel" style="color:'+vcolor+'">'+esc(r.verdict)+'</div>';
+  h+='<div class="vscore">Điểm tổng: <b>'+r.score.toFixed(1)+"</b> - Điểm trung bình mỗi cặp: <b>"+r.avg.toFixed(2)+"</b><br>Cát: "+r.nCat+" cặp ("+r.catPts.toFixed(1)+" điểm) - Hung: "+r.nHung+" cặp ("+r.hungPts.toFixed(1)+" điểm) - Không thành từ trường: "+r.nNone+" cặp</div></div>";
+  const tot = Math.max(1, r.nCat+r.nHung+r.nNone);
+  h+='<div class="bar"><div class="bcat" style="width:'+(r.nCat/tot*100)+'%"></div><div class="bhung" style="width:'+(r.nHung/tot*100)+'%"></div><div class="bnone" style="width:'+(r.nNone/tot*100)+'%"></div></div>';
+  h+='<div class="legend"><span><span class="dot cat"></span>Cát '+r.nCat+'</span><span><span class="dot hung"></span>Hung '+r.nHung+'</span><span>Không thành '+r.nNone+"</span></div>";
+  h+="</div>";
+  h+=domainHTML(r);
+  h+=flowHTML(r);
+  /* canh bao */
+  const alerts=[...r.tailAlerts, ...r.comboAlerts];
+  if(alerts.length){
+    h+='<div class="card"><h2>Điểm cần lưu ý</h2>';
+    alerts.forEach(a=>{ h+='<div class="alert '+a.cls+'">'+esc(a.text)+"</div>"; });
+    h+="</div>";
+  }
+  /* tung cap */
+  h+='<div class="card"><h2>Từng cặp số</h2><div class="pairs">';
+  r.pairs.forEach((p,i)=>{
+    if(!p.key){
+      h+='<div class="pair none"><span class="pnum">'+p.pair+'</span><span><span class="pname">Không thành từ trường</span><br><span class="pmeta">Cặp có số 0 hoặc số 5</span></span><span class="ptag none">Bỏ qua</span></div>';
+    } else {
+      const f=FIELDS[p.key];
+      const mod = p.mod? '<br><span class="pmeta">'+modText(p)+"</span>" : "";
+      const ptsTxt = (p.pts!==undefined)? " - điểm "+(f.group==="cat"?"+":"-")+p.pts.toFixed(1) : "";
+      h+='<div class="pair '+f.group+'"><span class="pnum">'+p.pair+'</span><span><span class="pname">'+esc(f.name)+'</span><br><span class="pmeta">Năng lượng mức '+strengthOf(p.level)+ptsTxt+"</span>"+mod+'</span><span class="ptag '+f.group+'">'+(f.group==="cat"?"Cát":"Hung")+"</span></div>";
+    }
+  });
+  h+="</div></div>";
+  /* thong ke + chi tiet */
+  const present = Object.keys(r.counts).sort((a,b)=>r.counts[b]-r.counts[a]);
+  if(present.length){
+    h+='<div class="card"><h2>Từ trường xuất hiện</h2><table class="stat"><tr><th>Từ trường</th><th>Nhóm</th><th>Số lần</th></tr>';
+    present.forEach(k=>{
+      const f=FIELDS[k];
+      h+="<tr><td><span class=\"dot "+f.group+'"></span>'+esc(f.name)+"</td><td>"+(f.group==="cat"?"Cát":"Hung")+"</td><td>"+r.counts[k]+"</td></tr>";
+    });
+    h+="</table>";
+    h+="<h3>Luận chi tiết từng từ trường</h3>";
+    present.forEach((k,i)=>{ h+=fieldDetailHTML(k, i===0); });
+    h+="</div>";
+  }
+  /* nut copy */
+  h+='<div class="card"><button class="btn" id="btnShare" style="margin-top:0">Tạo bản luận đẹp để gửi</button><button class="btn secondary" id="btnCopy">Sao chép kết quả luận dạng chữ</button><div id="copyMsg" class="hint" style="margin-top:6px;text-align:center"></div></div>';
+  lastSingle={r, typeLabel, methodLabel};
+  $("result").innerHTML=h;
+  $("btnShare").addEventListener("click", ()=>openShare("single"));
+  $("btnCopy").addEventListener("click", ()=>copyResult(r, typeLabel, methodLabel));
+  $("result").scrollIntoView({behavior:"smooth", block:"start"});
+}
+function resultText(r, typeLabel, methodLabel){
+  let t="LUẬN SIM BÁT CỰC LINH SỐ\n";
+  t+="Dãy số: "+r.digits+" ("+typeLabel+")\n";
+  t+="Cách chia cặp: "+methodLabel+"\n";
+  t+="Kết luận: "+r.verdict+" - Điểm tổng "+r.score.toFixed(1)+"\n";
+  t+="Cát "+r.nCat+" cặp - Hung "+r.nHung+" cặp - Không thành từ trường "+r.nNone+" cặp\n";
+  const ds=domainScores(r);
+  if(ds){ t+="\nĐiểm theo lĩnh vực:\n"; ds.forEach(d=>{ t+="- "+d.name+": "+d.pct+"/100 ("+d.label+")\n"; }); }
+  const fd=flowData(r);
+  t+="\nDòng năng lượng: "+fd.segments.map(s=>s.name+" "+(s.sum>0?"+":"")+s.sum.toFixed(1)).join(" · ")+"\n";
+  t+="Xu hướng: "+fd.trendText+"\n";
+  t+="\n";
+  t+="Từng cặp:\n";
+  r.pairs.forEach(p=>{
+    if(!p.key) t+="- "+p.pair+": không thành từ trường\n";
+    else t+="- "+p.pair+": "+FIELDS[p.key].name+(p.mod? " ("+modText(p)+")" : "")+"\n";
+  });
+  const alerts=[...r.tailAlerts, ...r.comboAlerts];
+  if(alerts.length){ t+="\nĐiểm cần lưu ý:\n"; alerts.forEach(a=>t+="- "+a.text+"\n"); }
+  t+="\n(Kết quả tham khảo theo Bát Cực Linh Số)";
+  return t;
+}
+function copyResult(r, typeLabel, methodLabel){
+  const txt=resultText(r, typeLabel, methodLabel);
+  const done=()=>{ $("copyMsg").textContent="Đã sao chép. Bạn dán vào Zalo, ghi chú... đều được."; };
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt, done)); }
+  else fallbackCopy(txt, done);
+}
+function fallbackCopy(txt, done){
+  const ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta);
+  ta.select(); try{ document.execCommand("copy"); done(); }catch(e){ $("copyMsg").textContent="Không sao chép tự động được, bạn chụp màn hình kết quả nhé."; }
+  document.body.removeChild(ta);
+}
+
+/* ============ HIEN THI LUAN KET HOP ============ */
+function miniSummary(title, sub, r){
+  const top = Object.keys(r.counts).sort((a,b)=>r.counts[b]-r.counts[a]).slice(0,3)
+    .map(k=>FIELDS[k].name+" x"+r.counts[k]).join(", ") || "không có từ trường rõ";
+  return '<div class="fcard" style="cursor:default"><div class="fname" style="font-size:15px">'+title+'</div>'
+    +'<div class="ftheme">'+sub+'</div>'
+    +'<div style="font-weight:800; letter-spacing:1px; margin:6px 0; word-break:break-all">'+esc(r.digits)+'</div>'
+    +'<div class="hint">Kết luận riêng: <b style="color:var(--gold2)">'+esc(r.verdict)+'</b><br>Điểm TB mỗi cặp: '+r.avg.toFixed(2)+' - Cát '+r.nCat+' - Hung '+r.nHung+'<br>Nổi bật: '+esc(top)+'</div></div>';
+}
+function renderCombo(cr){
+  const methodLabel = cr.menh.method==="ktc"?"Kim Tâm Cát - cặp thật, xét 0 và 5":"Trượt liền kề";
+  let h='<div class="card"><h2>Tổng quan mệnh và số</h2>';
+  h+='<p class="hint" style="text-align:center">Cách chia cặp: '+methodLabel+'</p>';
+  h+='<div class="grid8">'+miniSummary("CCCD - Tiên thiên (mệnh)", "Cố định, không thay đổi được", cr.menh)
+     + miniSummary("SIM - Hậu thiên (chỉnh vận)", "Dùng hằng ngày, ảnh hưởng tích lũy", cr.sim)+"</div>";
+  const vcolor = cr.compat>=0.4 ? "var(--cat)" : (cr.compat<=-0.4 ? "var(--hung)" : "var(--warn)");
+  h+='<div class="verdict"><div class="vlabel" style="color:'+vcolor+'">'+esc(cr.verdict)+'</div>';
+  h+='<div class="vscore">Điểm hợp mệnh: <b>'+cr.compat.toFixed(2)+'</b> = điểm SIM '+cr.sim.avg.toFixed(2)
+     +' + chế hóa '+cr.chehoa.filter(c=>c.level!=="none").length+' mục (cộng '+(0.4*cr.chehoa.filter(c=>c.level!=="none").length).toFixed(1)+')'
+     +' + cát cộng hưởng '+cr.congHuongCat.length+' mục (cộng '+(0.2*cr.congHuongCat.length).toFixed(1)+')'
+     +' - hung cộng hưởng '+cr.congHuongHung.length+' mục (trừ '+(0.5*cr.congHuongHung.length).toFixed(1)+')</div></div>';
+  h+="</div>";
+  h+=domainHTML(cr.sim, "Chấm điểm lĩnh vực của SIM (hậu thiên)");
+  h+=flowHTML(cr.sim, "Dòng năng lượng của SIM (hậu thiên)");
+  /* menh */
+  h+='<div class="card"><h2>Mệnh trong CCCD</h2>';
+  if(cr.catInMenh.length){
+    h+='<p class="kv"><b>Điểm mạnh bẩm sinh (cát tinh trong mệnh):</b> '+cr.catInMenh.map(c=>FIELDS[c.key].name+" x"+c.count+" ("+c.pts.toFixed(1)+" điểm)").join(", ")+'</p>';
+  } else h+='<p class="kv">Mệnh không có cát tinh nào rõ: càng cần SIM tốt để bổ hậu thiên.</p>';
+  if(cr.hungInMenh.length){
+    h+='<p class="kv"><b>Điểm vướng trong mệnh (hung tinh):</b> '+cr.hungInMenh.map(c=>FIELDS[c.key].name+" x"+c.count+" ("+c.pts.toFixed(1)+" điểm)").join(", ")+'</p>';
+  } else h+='<p class="kv">Mệnh không có hung tinh nào: nền mệnh sạch, SIM chỉ cần giữ cát là tốt.</p>';
+  if(cr.menh.counts["phucvi"]) h+='<div class="alert note">Mệnh có Phục Vị: theo tài liệu, Phục Vị theo cát thì cát, theo hung thì hung - SIM càng tốt thì mệnh càng được kéo lên, SIM xấu thì càng trì trệ theo.</div>';
+  h+="</div>";
+  /* che hoa */
+  h+='<div class="card"><h2>Đối chiếu chế hóa</h2>';
+  if(!cr.chehoa.length) h+='<p class="hint">Mệnh không có hung tinh nên không cần xét chế hóa.</p>';
+  else {
+    h+='<table class="stat"><tr><th>Hung trong mệnh</th><th>Cát chế hóa</th><th>Trong SIM</th><th>Mức</th></tr>';
+    cr.chehoa.forEach(c=>{
+      const lvl = c.level==="strong" ? '<span style="color:#7be495; font-weight:700">Chế hóa mạnh</span>'
+        : c.level==="partial" ? '<span style="color:var(--warn); font-weight:700">Chế hóa một phần</span>'
+        : '<span style="color:#ff9d9a; font-weight:700">Chưa được chế hóa</span>';
+      h+="<tr><td>"+esc(FIELDS[c.hung].name)+" ("+c.hungPts.toFixed(1)+"đ)</td><td>"+esc(FIELDS[c.ctrl].name)+"</td><td>"+(c.ctrlCount? ("có, "+c.ctrlPts.toFixed(1)+"đ") : "không có")+"</td><td>"+lvl+"</td></tr>";
+    });
+    h+="</table>";
+  }
+  cr.congHuongHung.forEach(c=>{
+    h+='<div class="alert bad"><b>Cộng hưởng xấu - '+esc(FIELDS[c.key].name)+':</b> mệnh đã có '+c.menhCount+' lần, SIM lại thêm '+c.simCount+' lần. Hung tinh này bị nhân lên ở cả tiên thiên lẫn hậu thiên, là điểm trừ nặng nhất khi xét hợp mệnh.</div>';
+  });
+  cr.congHuongCat.forEach(c=>{
+    h+='<div class="alert good"><b>Cộng hưởng tốt - '+esc(FIELDS[c.key].name)+':</b> mệnh có sẵn và SIM cũng có: sở trường bẩm sinh được hậu thiên tăng cường thêm.</div>';
+  });
+  if(cr.simBoKhuyet.length){
+    h+='<div class="alert note"><b>SIM bổ khuyết cho mệnh:</b> '+cr.simBoKhuyet.map(k=>FIELDS[k].name).join(", ")+' - mệnh không có mà SIM mang đến, đúng vai trò của hậu thiên.</div>';
+  }
+  h+="</div>";
+  /* goi y */
+  h+='<div class="card"><h2>Gợi ý</h2>';
+  cr.suggestions.forEach(s=>{ h+='<div class="alert note">'+esc(s)+"</div>"; });
+  h+="</div>";
+  /* chi tiet tu truong lien quan */
+  const relKeys=[];
+  cr.chehoa.forEach(c=>{ if(!relKeys.includes(c.hung)) relKeys.push(c.hung); if(c.ctrl&&!relKeys.includes(c.ctrl)) relKeys.push(c.ctrl); });
+  cr.congHuongCat.forEach(c=>{ if(!relKeys.includes(c.key)) relKeys.push(c.key); });
+  if(relKeys.length){
+    h+='<div class="card"><h2>Chi tiết các từ trường liên quan</h2>';
+    relKeys.forEach((k,i)=>{ h+=fieldDetailHTML(k, i===0); });
+    h+="</div>";
+  }
+  h+='<div class="card"><button class="btn" id="btnShareCombo" style="margin-top:0">Tạo bản luận đẹp để gửi</button><button class="btn secondary" id="btnCopyCombo">Sao chép kết quả kết hợp dạng chữ</button><div id="copyMsgCombo" class="hint" style="margin-top:6px;text-align:center"></div></div>';
+  lastCombo=cr;
+  $("comboResult").innerHTML=h;
+  $("btnShareCombo").addEventListener("click", ()=>openShare("combo"));
+  $("btnCopyCombo").addEventListener("click", ()=>{
+    let t="LUẬN KẾT HỢP CCCD + SIM - BÁT CỰC LINH SỐ\n";
+    t+="CCCD (tiên thiên): "+cr.menh.digits+" - "+cr.menh.verdict+"\n";
+    t+="SIM (hậu thiên): "+cr.sim.digits+" - "+cr.sim.verdict+"\n";
+    t+="Kết luận hợp mệnh: "+cr.verdict+" - Điểm hợp mệnh "+cr.compat.toFixed(2)+"\n\n";
+    t+="Chế hóa:\n";
+    cr.chehoa.forEach(c=>{ t+="- "+FIELDS[c.hung].name+" trong mệnh: "+(c.level==="none"?"chưa có "+FIELDS[c.ctrl].name+" trong SIM để chế hóa": FIELDS[c.ctrl].name+" trong SIM chế hóa "+(c.level==="strong"?"mạnh":"một phần"))+"\n"; });
+    cr.congHuongHung.forEach(c=>{ t+="- Cộng hưởng xấu: "+FIELDS[c.key].name+" có ở cả mệnh và SIM\n"; });
+    cr.congHuongCat.forEach(c=>{ t+="- Cộng hưởng tốt: "+FIELDS[c.key].name+"\n"; });
+    t+="\nGợi ý:\n"; cr.suggestions.forEach(s=>{ t+="- "+s+"\n"; });
+    t+="\n(Kết quả tham khảo theo Bát Cực Linh Số)";
+    const done=()=>{ $("copyMsgCombo").textContent="Đã sao chép."; };
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done).catch(()=>fallbackCopy(t,done));
+    else fallbackCopy(t,done);
+  });
+  $("comboResult").scrollIntoView({behavior:"smooth", block:"start"});
+}
+function doCombo(save=true){
+  const cccd=cleanNumber($("inpCCCD").value);
+  const sim=cleanNumber($("inpSIM").value);
+  $("comboError").innerHTML="";
+  if(cccd.length<9){ $("comboError").innerHTML='<div class="err">Số CCCD chưa đúng: CCCD có 12 chữ số, bạn nhập ít nhất 9 số nhé.</div>'; return; }
+  if(sim.length<8){ $("comboError").innerHTML='<div class="err">Số điện thoại chưa đúng: bạn nhập ít nhất 8 chữ số nhé.</div>'; return; }
+  $("inpCCCD").value=cccd; $("inpSIM").value=sim;
+  const cr=comboAnalyze(cccd, sim, curMethod);
+  renderCombo(cr);
+  if(save){
+    const now=new Date();
+    const when=now.toLocaleDateString("vi-VN")+" "+now.toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"});
+    saveHistItem({combo:true, cccd, sim, number:cccd+" + "+sim, type:"kethop", method:curMethod,
+      typeLabel:"Kết hợp CCCD + SIM", methodLabel:(curMethod==="ktc"?"Kim Tâm Cát":"Trượt liền kề"),
+      verdict:cr.verdict, score:cr.compat.toFixed(1), when});
+  }
+}
+$("btnCombo").addEventListener("click", ()=>doCombo(true));
+segWire("segMethodKH","method", v=>{
+  curMethod=v;
+  document.querySelectorAll("#segMethod button").forEach(b=>b.classList.toggle("active", b.dataset.method===v));
+  document.querySelectorAll("#segMethodCS button").forEach(b=>b.classList.toggle("active", b.dataset.method===v));
+});
+
+/* ============ LUAN HANG LOAT - UI ============ */
+let lastBatch=null;
+function parseBatch(text){
+  const tokens = String(text||"").match(/\d+/g) || [];
+  const seen={}, out=[];
+  tokens.forEach(t=>{
+    const d=cleanNumber(t);
+    if(d.length>=8 && d.length<=15 && !seen[d]){ seen[d]=1; out.push(d); }
+  });
+  return out;
+}
+function doBatch(){
+  const nums = parseBatch($("inpBatch").value);
+  $("batchError").innerHTML="";
+  if(!nums.length){ $("batchError").innerHTML='<div class="err">Chưa đọc được số nào hợp lệ. Bạn dán danh sách số vào (mỗi số ít nhất 8 chữ số) nhé.</div>'; return; }
+  let note="";
+  let list=nums;
+  if(list.length>50){ list=list.slice(0,50); note="Danh sách dài quá nên app chỉ luận 50 số đầu tiên. "; }
+  const cccdRaw = cleanNumber($("inpCCCD2").value);
+  const cccd = cccdRaw.length>=9? cccdRaw : null;
+  if(cccdRaw && !cccd) note+="Số CCCD chưa đủ dài nên app bỏ qua phần hợp mệnh. ";
+  const priority = $("selPriority").value || "";
+  let items = rankBatch(list, curMethod, cccd, priority);
+  const totalBefore = items.length;
+  if($("chkFilterTail").checked){
+    items = items.filter(it=>!it.tailBad);
+    if(items.length<totalBefore) note+="Đã loại "+(totalBefore-items.length)+" số có đuôi xấu. ";
+  }
+  lastBatch = {items, cccd, priority, method:curMethod};
+  renderBatch(items, cccd, priority, note);
+}
+function renderBatch(items, cccd, priority, note){
+  const prioName = priority? (DOMAINS.find(d=>d.key===priority)||{}).name : null;
+  let h='<div class="card"><h2>Bảng xếp hạng '+items.length+' số</h2>';
+  h+='<p class="hint">Xếp hạng theo: <b style="color:var(--gold2)">'+(prioName? ("lĩnh vực "+prioName) : (cccd? "điểm hợp mệnh với CCCD của bạn" : "điểm tổng thể của dãy SIM"))+'</b>'
+    +(cccd? (" - CCCD: "+esc(cccd)) : "")+". Bấm Xem chi tiết để luận sâu từng số.</p>";
+  if(note) h+='<div class="alert note">'+esc(note)+'</div>';
+  if(!items.length) h+='<p class="hint">Không còn số nào sau khi lọc. Bạn bỏ chọn mục loại đuôi xấu rồi thử lại nhé.</p>';
+  items.forEach((it,idx)=>{
+    const r=it.r;
+    const mainTxt = it.combo? (it.combo.verdict+" - hợp mệnh "+it.combo.compat.toFixed(2)) : (r.verdict+" - điểm TB "+r.avg.toFixed(2));
+    const domTxt = it.ds? it.ds.map(d=>d.name.split(" - ")[0]+' <b>'+d.pct+"</b>").join(" · ") : "";
+    h+='<div class="brow'+(idx===0?" top":"")+'"><span class="brank">'+(idx+1)+'</span>'
+      +'<span><span class="bnum">'+esc(it.digits)+'</span><br><span class="bmeta">'+esc(mainTxt)+" - Cát "+r.nCat+" · Hung "+r.nHung+'</span><br><span class="bdom">'+domTxt+'</span></span>'
+      +(r.overuse||[]).map(o=> FIELDS[o.key].group==="hung"
+          ? '<span class="btag bad">Lặp nhiều: '+esc(FIELDS[o.key].name)+'</span>'
+          : '<span class="btag" style="background:rgba(255,183,77,.16); color:var(--warn)">Lặp nhiều: '+esc(FIELDS[o.key].name)+'</span>').join("")
+      +(it.tailBad? '<span class="btag bad">Đuôi xấu</span>' : '<span class="btag good">Đuôi ổn</span>')
+      +'<button class="bview" data-num="'+esc(it.digits)+'">Xem chi tiết</button></div>';
+  });
+  if(items.length) h+='<button class="btn secondary" id="btnCopyBatch">Sao chép bảng xếp hạng dạng chữ</button><div id="copyMsgBatch" class="hint" style="margin-top:6px;text-align:center"></div>';
+  h+="</div>";
+  $("batchResult").innerHTML=h;
+  $("batchResult").querySelectorAll(".bview").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      curType="sim";
+      document.querySelectorAll("#segType button").forEach(x=>x.classList.toggle("active", x.dataset.type==="sim"));
+      $("inpNumber").value=b.dataset.num;
+      document.querySelector('nav button[data-tab="luan"]').click();
+      doAnalyze(true);
+    });
+  });
+  const cb=$("btnCopyBatch");
+  if(cb) cb.addEventListener("click", ()=>{
+    let t="BẢNG XẾP HẠNG SIM - BÁT CỰC LINH SỐ\n";
+    items.forEach((it,idx)=>{
+      const mainTxt = it.combo? (it.combo.verdict+" - hợp mệnh "+it.combo.compat.toFixed(2)) : (it.r.verdict+" - điểm TB "+it.r.avg.toFixed(2));
+      t+=(idx+1)+". "+it.digits+" - "+mainTxt+(it.tailBad?" - ĐUÔI XẤU":"")+"\n";
+    });
+    t+="\n(Kết quả tham khảo theo Bát Cực Linh Số)";
+    const done=()=>{ $("copyMsgBatch").textContent="Đã sao chép."; };
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done).catch(()=>fallbackCopy(t,done));
+    else fallbackCopy(t,done);
+  });
+  $("batchResult").scrollIntoView({behavior:"smooth", block:"start"});
+}
+$("btnBatch").addEventListener("click", doBatch);
+segWire("segMethodCS","method", v=>{
+  curMethod=v;
+  document.querySelectorAll("#segMethod button").forEach(b=>b.classList.toggle("active", b.dataset.method===v));
+  document.querySelectorAll("#segMethodKH button").forEach(b=>b.classList.toggle("active", b.dataset.method===v));
+});
+
+/* ============ BAN LUAN DEP DE GUI ============ */
+let lastSingle=null, lastCombo=null;
+function repHead(){
+  const now=new Date();
+  const when=now.toLocaleDateString("vi-VN")+" "+now.toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"});
+  return '<div class="rep-head"><div class="rep-title">BÁT CỰC LINH SỐ</div><div class="rep-sub">Bản luận năng lượng số - Ngày luận: '+when+'</div></div>'
+    +'<div class="rep-for" id="shareNameRow" style="display:none; margin-top:10px">Luận cho: <b id="shareNameSpan"></b></div>';
+}
+function repFoot(){
+  return '<div class="rep-foot">Kết quả luận theo Bát Cực Linh Số chỉ mang tính tham khảo, không phải kết luận khoa học.<br>Mệnh là tiên thiên, số là hậu thiên - hậu thiên tốt vẫn cần chính mình nỗ lực vun bồi.</div>';
+}
+function repDomains(r){
+  const ds=domainScores(r);
+  if(!ds) return "";
+  let h="<h3>Điểm theo lĩnh vực</h3>";
+  ds.forEach(d=>{
+    const col = d.pct>=56? "#2f9e5f" : (d.pct>=45? "#c9962e" : "#d23c38");
+    h+='<div class="rep-drow"><span class="rn">'+esc(d.name)+'</span><span class="rep-dbar"><div style="width:'+d.pct+'%; background:'+col+'"></div></span><span class="rp">'+d.pct+"/100</span></div>";
+  });
+  return h;
+}
+function trimTxt(s, n){ s=String(s||""); return s.length>n? s.slice(0, n-1).trim()+"..." : s; }
+function buildShareSingle(){
+  if(!lastSingle) return "";
+  const r=lastSingle.r;
+  const fd=flowData(r);
+  let h=repHead();
+  h+='<div class="rep-num">'+esc(r.digits)+'</div>';
+  h+='<div class="rep-score">'+esc(lastSingle.typeLabel)+" - Cách chia cặp: "+esc(lastSingle.methodLabel)+'</div>';
+  const vc = r.avg>=0.4? "#2f9e5f" : (r.avg<=-0.4? "#d23c38" : "#c9962e");
+  h+='<div class="rep-verdict" style="color:'+vc+'">Kết luận: '+esc(r.verdict)+'</div>';
+  h+='<div class="rep-score">Điểm tổng '+r.score.toFixed(1)+' - Cát '+r.nCat+' cặp · Hung '+r.nHung+' cặp · Không thành từ trường '+r.nNone+' cặp</div>';
+  h+=repDomains(r);
+  h+="<h3>Dòng năng lượng</h3>";
+  h+='<div class="rep-segs">'+fd.segments.map(s=>"<div>"+esc(s.name)+"<b>"+(s.sum>0?"+":"")+s.sum.toFixed(1)+"</b></div>").join("")+"</div>";
+  h+="<p>"+esc(fd.trendText)+"</p>";
+  const alerts=[...r.tailAlerts, ...r.comboAlerts];
+  if(alerts.length){ h+="<h3>Điểm cần lưu ý</h3><ul>"+alerts.map(a=>"<li>"+esc(a.text)+"</li>").join("")+"</ul>"; }
+  h+="<h3>Từng cặp số</h3>";
+  h+='<div class="rep-chips">'+r.pairs.map(p=>"<span>"+esc(p.pair)+" · "+(p.key? esc(FIELDS[p.key].name)+(p.mod? (p.mod==="0"?" (có 0)":" (có 5)") : "") : "không thành")+"</span>").join("")+"</div>";
+  const present=Object.keys(r.counts).sort((a,b)=>r.counts[b]-r.counts[a]);
+  if(present.length){
+    h+="<h3>Các từ trường trong dãy</h3>";
+    present.forEach(k=>{
+      const f=FIELDS[k];
+      h+="<p><b>"+esc(f.name)+"</b> (x"+r.counts[k]+", "+(f.group==="cat"?"Cát tinh":"Hung tinh")+") - "+esc(f.theme)+".<br>Tài vận: "+esc(trimTxt(f.money, 200))+"<br>Tình cảm: "+esc(trimTxt(f.love, 160))+"</p>";
+    });
+  }
+  h+=repFoot();
+  return h;
+}
+function buildShareCombo(){
+  if(!lastCombo) return "";
+  const cr=lastCombo;
+  let h=repHead();
+  h+='<div class="rep-num" style="font-size:24px">'+esc(cr.menh.digits)+'</div>';
+  h+='<div class="rep-score">Số CCCD - tiên thiên (mệnh)</div>';
+  h+='<div class="rep-num" style="font-size:24px">'+esc(cr.sim.digits)+'</div>';
+  h+='<div class="rep-score">Số điện thoại - hậu thiên (chỉnh vận)</div>';
+  const vc = cr.compat>=0.4? "#2f9e5f" : (cr.compat<=-0.4? "#d23c38" : "#c9962e");
+  h+='<div class="rep-verdict" style="color:'+vc+'">Mức hợp mệnh: '+esc(cr.verdict)+'</div>';
+  h+='<div class="rep-score">Điểm hợp mệnh '+cr.compat.toFixed(2)+' - Mệnh: '+esc(cr.menh.verdict)+' · SIM: '+esc(cr.sim.verdict)+'</div>';
+  if(cr.catInMenh.length) h+="<p><b>Điểm mạnh trong mệnh:</b> "+cr.catInMenh.map(c=>FIELDS[c.key].name+" x"+c.count).join(", ")+"</p>";
+  if(cr.hungInMenh.length) h+="<p><b>Điểm vướng trong mệnh:</b> "+cr.hungInMenh.map(c=>FIELDS[c.key].name+" x"+c.count).join(", ")+"</p>";
+  if(cr.chehoa.length){
+    h+="<h3>Đối chiếu chế hóa</h3><ul>";
+    cr.chehoa.forEach(c=>{
+      const lvl = c.level==="strong"? "đã được "+FIELDS[c.ctrl].name+" trong SIM chế hóa mạnh" : c.level==="partial"? "được "+FIELDS[c.ctrl].name+" trong SIM chế hóa một phần" : "chưa có "+FIELDS[c.ctrl].name+" trong SIM để chế hóa";
+      h+="<li>"+esc(FIELDS[c.hung].name)+" trong mệnh: "+esc(lvl)+"</li>";
+    });
+    h+="</ul>";
+  }
+  cr.congHuongHung.forEach(c=>{ h+="<p><b>Cộng hưởng xấu:</b> "+esc(FIELDS[c.key].name)+" có ở cả mệnh (x"+c.menhCount+") và SIM (x"+c.simCount+").</p>"; });
+  cr.congHuongCat.forEach(c=>{ h+="<p><b>Cộng hưởng tốt:</b> "+esc(FIELDS[c.key].name)+" có ở cả mệnh và SIM.</p>"; });
+  h+=repDomains(cr.sim);
+  h+="<h3>Gợi ý</h3><ul>"+cr.suggestions.map(s=>"<li>"+esc(s)+"</li>").join("")+"</ul>";
+  h+=repFoot();
+  return h;
+}
+function applyShareName(){
+  const name=$("inpShareName").value.trim();
+  const row=$("shareNameRow"), span=$("shareNameSpan");
+  if(row&&span){ row.style.display = name? "block" : "none"; span.textContent=name; }
+}
+function openShare(kind){
+  $("shareCard").innerHTML = kind==="combo"? buildShareCombo() : buildShareSingle();
+  applyShareName();
+  $("shareOverlay").classList.add("open");
+  $("shareOverlay").scrollTop=0;
+}
+$("btnCloseShare").addEventListener("click", ()=>$("shareOverlay").classList.remove("open"));
+$("shareOverlay").addEventListener("click", e=>{ if(e.target===$("shareOverlay")) $("shareOverlay").classList.remove("open"); });
+$("btnPrintShare").addEventListener("click", ()=>window.print());
+$("inpShareName").addEventListener("input", applyShareName);
+
+/* ============ LUYEN TAP - UI ============ */
+const QUIZ_KEY="bcls_quiz_stats_v1";
+let quizMode="pair", quizCur=null, quizAnswered=false;
+let quizSession={answered:0, correct:0, streak:0};
+function loadQuizStats(){ try{ return JSON.parse(localStorage.getItem(QUIZ_KEY))||{answered:0, correct:0, bestStreak:0}; }catch(e){ return {answered:0, correct:0, bestStreak:0}; } }
+function renderQuizStats(){
+  const all=loadQuizStats();
+  const acc = quizSession.answered? Math.round(quizSession.correct/quizSession.answered*100) : 0;
+  $("quizStats").innerHTML=
+    "<span>Phiên này: đúng "+quizSession.correct+"/"+quizSession.answered+" ("+acc+"%)</span>"
+    +"<span>Chuỗi đúng: "+quizSession.streak+"</span>"
+    +"<span>Tổng cộng: đúng "+all.correct+"/"+all.answered+"</span>"
+    +"<span>Chuỗi tốt nhất: "+all.bestStreak+"</span>";
+}
+function nextQuestion(){
+  quizAnswered=false;
+  quizCur = quizMode==="pair"? makePairQuestion() : makeFieldQuestion();
+  const box=$("quizBox");
+  let h="";
+  if(quizCur.kind==="pair"){
+    h+='<div class="qask">Cặp số này thuộc từ trường nào?</div><div class="qpair">'+esc(quizCur.pair)+'</div>';
+    h+='<div class="qopts">'+quizCur.options.map(k=>'<button class="qopt" data-val="'+k+'">'+esc(FIELDS[k].name)+'</button>').join("")+"</div>";
+  } else {
+    const f=FIELDS[quizCur.fieldKey];
+    h+='<div class="qask">Cặp số nào dưới đây thuộc từ trường này?</div><div class="qfield">'+esc(f.name)+'</div><div class="qask">'+esc(f.theme)+'</div>';
+    h+='<div class="qopts">'+quizCur.options.map(p=>'<button class="qopt" data-val="'+p+'" style="letter-spacing:2px">'+esc(p)+'</button>').join("")+"</div>";
+  }
+  h+='<div id="quizExplain" style="margin-top:12px"></div>';
+  box.innerHTML=h;
+  box.querySelectorAll(".qopt").forEach(b=>b.addEventListener("click", ()=>answerQuiz(b)));
+  $("btnNextQ").textContent="Câu tiếp theo";
+  renderQuizStats();
+}
+function answerQuiz(btn){
+  if(quizAnswered) return;
+  quizAnswered=true;
+  const val=btn.dataset.val;
+  let isCorrect, explain;
+  if(quizCur.kind==="pair"){
+    isCorrect = val===quizCur.correctKey;
+    const f=FIELDS[quizCur.correctKey];
+    const lv=strengthOf(PAIR2FIELD[quizCur.pair].level);
+    explain="<b>"+esc(quizCur.pair)+"</b> thuộc <b>"+esc(f.name)+"</b> - "+(f.group==="cat"?"Cát tinh":"Hung tinh")+", ngũ hành "+esc(f.element)+", năng lượng mức "+lv+"/4. Chủ về: "+esc(f.theme)+". Các cặp của "+esc(f.name)+": "+f.pairs.join(", ")+".";
+  } else {
+    isCorrect = val===quizCur.correctPair;
+    const f=FIELDS[quizCur.fieldKey];
+    explain="Cặp thuộc <b>"+esc(f.name)+"</b> là <b>"+esc(quizCur.correctPair)+"</b>. Toàn bộ cặp của "+esc(f.name)+": "+f.pairs.join(", ")+".";
+  }
+  $("quizBox").querySelectorAll(".qopt").forEach(b=>{
+    b.disabled=true;
+    const bv=b.dataset.val;
+    const correctVal = quizCur.kind==="pair"? quizCur.correctKey : quizCur.correctPair;
+    if(bv===correctVal) b.classList.add("correct");
+    else if(b===btn) b.classList.add("wrong");
+  });
+  quizSession.answered++;
+  const all=loadQuizStats(); all.answered++;
+  if(isCorrect){ quizSession.correct++; quizSession.streak++; all.correct++; if(quizSession.streak>all.bestStreak) all.bestStreak=quizSession.streak; }
+  else quizSession.streak=0;
+  localStorage.setItem(QUIZ_KEY, JSON.stringify(all));
+  $("quizExplain").innerHTML='<div class="alert '+(isCorrect?"good":"bad")+'"><b>'+(isCorrect?"Đúng rồi!":"Chưa đúng.")+"</b> "+explain+"</div>";
+  renderQuizStats();
+}
+$("btnNextQ").addEventListener("click", nextQuestion);
+segWire("segQuizMode","qmode", v=>{ quizMode=v; nextQuestion(); });
+renderQuizStats();
+
+/* ============ LICH SU (localStorage) ============ */
+const HIST_KEY="bcls_history_v1";
+function loadHist(){ try{ return JSON.parse(localStorage.getItem(HIST_KEY))||[]; }catch(e){ return []; } }
+function saveHistItem(item){
+  const h=loadHist().filter(x=>!(x.number===item.number&&x.method===item.method&&x.type===item.type));
+  h.unshift(item); localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0,60)));
+}
+function renderHistory(){
+  const h=loadHist(); const box=$("histList");
+  if(!h.length){ box.innerHTML='<p class="hint">Chưa có số nào được luận. Vào mục Luận SIM và luận số đầu tiên của bạn.</p>'; return; }
+  box.innerHTML="";
+  h.forEach((it,idx)=>{
+    const div=document.createElement("div"); div.className="hist-item";
+    div.innerHTML='<span><span class="hnum">'+esc(it.number)+'</span><br><span class="hmeta">'+esc(it.when)+" - "+esc(it.typeLabel)+" - "+esc(it.methodLabel)+'<br>Kết luận: '+esc(it.verdict)+" ("+it.score+")</span></span>";
+    const del=document.createElement("button"); del.className="hdel"; del.textContent="x"; del.title="Xóa";
+    del.addEventListener("click", ev=>{ ev.stopPropagation(); const hh=loadHist(); hh.splice(idx,1); localStorage.setItem(HIST_KEY, JSON.stringify(hh)); renderHistory(); });
+    div.appendChild(del);
+    div.addEventListener("click", ()=>{
+      if(it.combo){
+        curMethod=it.method;
+        document.querySelectorAll("#segMethodKH button").forEach(b=>b.classList.toggle("active", b.dataset.method===it.method));
+        document.querySelectorAll("#segMethod button").forEach(b=>b.classList.toggle("active", b.dataset.method===it.method));
+        document.querySelectorAll("#segMethodCS button").forEach(b=>b.classList.toggle("active", b.dataset.method===it.method));
+        $("inpCCCD").value=it.cccd; $("inpSIM").value=it.sim;
+        document.querySelector('nav button[data-tab="kethop"]').click();
+        doCombo(false);
+        return;
+      }
+      curType=it.type; curMethod=it.method;
+      document.querySelectorAll("#segType button").forEach(b=>b.classList.toggle("active", b.dataset.type===it.type));
+      document.querySelectorAll("#segMethod button").forEach(b=>b.classList.toggle("active", b.dataset.method===it.method));
+      $("inpNumber").value=it.number;
+      document.querySelector('nav button[data-tab="luan"]').click();
+      doAnalyze(false);
+    });
+    box.appendChild(div);
+  });
+}
+$("btnClearHist").addEventListener("click", ()=>{ localStorage.removeItem(HIST_KEY); renderHistory(); });
+
+/* ============ SU KIEN LUAN ============ */
+function doAnalyze(save=true){
+  const d=cleanNumber($("inpNumber").value);
+  $("inpError").innerHTML="";
+  if(d.length<8){ $("inpError").innerHTML='<div class="err">Dãy số hơi ngắn. Bạn nhập ít nhất 8 chữ số nhé (số điện thoại VN thường có 10 số).</div>'; return; }
+  if(d.length>15){ $("inpError").innerHTML='<div class="err">Dãy số dài quá 15 chữ số, bạn kiểm tra lại nhé.</div>'; return; }
+  $("inpNumber").value=d;
+  const r=analyze(d, curMethod);
+  renderResult(r);
+  if(save){
+    const typeLabel = curType==="sim"?"Số điện thoại":(curType==="cccd"?"CCCD":"Dãy số khác");
+    const methodLabel = curMethod==="ktc"?"Kim Tâm Cát":"Trượt liền kề";
+    const now=new Date();
+    const when=now.toLocaleDateString("vi-VN")+" "+now.toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"});
+    saveHistItem({number:d, type:curType, method:curMethod, typeLabel, methodLabel, verdict:r.verdict, score:r.score.toFixed(1), when});
+  }
+}
+$("btnAnalyze").addEventListener("click", ()=>doAnalyze(true));
+$("inpNumber").addEventListener("keydown", e=>{ if(e.key==="Enter") doAnalyze(true); });
+
+/* ============ TAB TRA TU TRUONG ============ */
+$("fieldGrid").innerHTML = Object.keys(FIELDS).map(k=>{
+  const f=FIELDS[k];
+  return '<div class="fcard" data-key="'+k+'"><span class="dot '+f.group+'"></span><span class="fname">'+esc(f.name)+'</span> <span class="hint">('+esc(f.element)+')</span><div class="ftheme">'+esc(f.theme)+'</div><div class="pairchips">'+f.pairs.map(p=>"<span>"+p+"</span>").join("")+"</div></div>";
+}).join("");
+document.querySelectorAll(".fcard").forEach(c=>{
+  c.addEventListener("click", ()=>{
+    $("fieldDetail").innerHTML='<div class="card"><h2>Chi tiết</h2>'+fieldDetailHTML(c.dataset.key, true)+"</div>";
+    $("fieldDetail").scrollIntoView({behavior:"smooth"});
+  });
+});
+$("inpPair").addEventListener("input", ()=>{
+  const v=$("inpPair").value.replace(/\D/g,"");
+  const box=$("pairResult");
+  if(v.length<2){ box.innerHTML=""; return; }
+  const hit=PAIR2FIELD[v];
+  if(!hit){ box.innerHTML='<div class="alert note">Cặp '+esc(v)+' có số 0 hoặc số 5 nên không tự thành từ trường. Trong cách Kim Tâm Cát, nó được xét như biến số ẩn (0) hoặc tăng cường (5) cho cặp thật bên cạnh.</div>'; return; }
+  const f=FIELDS[hit.key];
+  box.innerHTML='<div class="alert '+(f.group==="cat"?"good":"bad")+'">Cặp <b>'+esc(v)+'</b> thuộc từ trường <b>'+esc(f.name)+'</b> - '+(f.group==="cat"?"Cát tinh":"Hung tinh")+" - năng lượng mức "+strengthOf(hit.level)+"/4 - chủ về: "+esc(f.theme)+"</div>"+fieldDetailHTML(hit.key, false);
+});
+</script>
+</body>
+</html>

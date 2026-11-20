@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Luận SIM Bát Cực Linh Số v1.7</title>
+<title>Luận SIM Bát Cực Linh Số v1.8</title>
 <style>
 :root{
   --bg:#17102b; --bg2:#221741; --card:#2a1d4e; --card2:#33235c;
@@ -162,13 +162,22 @@ textarea{min-height:110px; resize:vertical; font-size:15px; line-height:1.5}
 .chk input{width:18px; height:18px; accent-color:var(--gold)}
 .kv{font-size:14px; line-height:1.65}
 .kv b{color:var(--gold2)}
+.filebox{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+.filebtn{flex:1; min-width:150px; text-align:center; background:var(--card2); color:var(--text); border:1px dashed var(--gold); border-radius:10px; padding:11px 10px; font-size:14px; font-weight:700; cursor:pointer}
+.filebtn:active{transform:scale(.99)}
+.progress{display:none; margin-top:12px; background:#1c1236; border:1px solid var(--line); border-radius:999px; overflow:hidden; height:22px; position:relative}
+.progress div{height:100%; background:var(--gold); width:0%}
+.progress span{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--text); text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.toolbar{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+.toolbar .btn{flex:1; min-width:140px; margin-top:0}
+.countline{font-size:13px; color:var(--gold2); margin-top:6px; font-weight:600}
 </style>
 </head>
 <body>
 <header>
   <h1>BÁT CỰC LINH SỐ</h1>
   <div class="sub">Luận SIM theo 8 từ trường - chạy local, không cần internet</div>
-  <span class="badge">v1.7 (12/11/2026)</span>
+  <span class="badge">v1.8 (20/11/2026)</span>
 </header>
 <nav>
   <button data-tab="luan" class="active">Luận SIM</button>
@@ -228,9 +237,16 @@ textarea{min-height:110px; resize:vertical; font-size:15px; line-height:1.5}
   <section class="tab" id="tab-chonsim">
     <div class="card">
       <h2>Luận hàng loạt - chọn SIM</h2>
-      <p class="hint">Dán danh sách số bạn đang cân nhắc (mỗi số 1 dòng, hoặc cách nhau bằng dấu phẩy, dấu cách đều được, tối đa 50 số). App luận hết và xếp hạng từ tốt nhất xuống.</p>
+      <p class="hint">Dán danh sách số, hoặc nạp thẳng file .txt (mỗi số 1 dòng, có dấu chấm kiểu 09.662.41331 cũng đọc được). App xử lý được hàng nghìn số (tối đa 20.000 số/lần), luận hết, xếp hạng từ tốt nhất xuống và xuất được ra file Excel.</p>
+      <label class="flabel">Nạp danh sách từ file</label>
+      <div class="filebox">
+        <label class="filebtn" for="inpBatchFile">Chọn file .txt / .csv</label>
+        <input type="file" id="inpBatchFile" accept=".txt,.csv,.text,text/plain,text/csv" style="display:none">
+      </div>
+      <div class="countline" id="batchFileInfo"></div>
       <label class="flabel">Danh sách số điện thoại</label>
       <textarea id="inpBatch" placeholder="VD:&#10;0913681986&#10;0905123789&#10;0987654321"></textarea>
+      <div class="countline" id="batchCount"></div>
       <label class="flabel">Số CCCD của bạn (không bắt buộc - điền thì xếp hạng theo độ hợp mệnh)</label>
       <input type="tel" id="inpCCCD2" placeholder="Để trống nếu chỉ xếp hạng theo bản thân dãy SIM" autocomplete="off">
       <label class="flabel">Ưu tiên xếp hạng theo</label>
@@ -249,6 +265,7 @@ textarea{min-height:110px; resize:vertical; font-size:15px; line-height:1.5}
       </div>
       <label class="chk"><input type="checkbox" id="chkFilterTail"> Loại hẳn số có đuôi xấu (đuôi 0, đuôi 05, hung tinh chốt đuôi)</label>
       <button class="btn" id="btnBatch">LUẬN VÀ XẾP HẠNG</button>
+      <div class="progress" id="batchProgress"><div></div><span></span></div>
       <div id="batchError"></div>
     </div>
     <div id="batchResult"></div>
@@ -310,7 +327,7 @@ textarea{min-height:110px; resize:vertical; font-size:15px; line-height:1.5}
         <p><b>Dòng năng lượng:</b> biểu đồ vẽ điểm tích lũy của dãy theo từng cặp (cát cộng, hung trừ), chia dãy thành 3 đoạn đầu - giữa - cuối. Đoạn cuối mạnh hơn đoạn đầu là vận đi lên về sau; ngược lại là hậu vận đuối dần. Vạch 0 là ranh giới: đường nằm trên là cát áp đảo, chìm xuống dưới là hung áp đảo.</p>
         <p><b>Cảnh báo quá mức:</b> một từ trường lặp từ 3 lần trong dãy, hoặc chạy liền nhau từ 3 cặp liên tiếp, sẽ bị app cảnh báo kèm mặt trái của nó theo tài liệu. Cát tinh quá nhiều cũng hóa vấn đề: Thiên Y nhiều dễ lao lực và huyết áp, Sinh Khí nhiều và dài thì lười và thiếu chí tiến, Phục Vị nhiều thì bảo thủ trì trệ. Hung tinh lặp nhiều thì mặt xấu bị nhân lên.</p>
         <p><b>Chấm điểm theo lĩnh vực:</b> ngoài điểm tổng, app chấm riêng 5 lĩnh vực (Tài vận, Sự nghiệp, Tình cảm - Hôn nhân, Sức khỏe, Quý nhân - Quan hệ) theo thang 100, 50 là trung tính. Mỗi từ trường có hệ số ảnh hưởng riêng lên từng lĩnh vực, đặt theo mục chủ về của nó trong tài liệu: VD Thiên Y chủ tiền tài nên Tài vận +2; Diên Niên là cát tinh nhưng tài liệu ghi nhiều bệnh vặt nên Sức khỏe -1; Lục Sát là hung tinh nhưng giỏi quan hệ xã hội nên Quý nhân +1 trong khi Tình cảm -2. Điểm cặp nào càng mạnh, có 5 tăng cường hay có 0 làm ẩn, thì ảnh hưởng lên lĩnh vực càng lớn theo tương ứng.</p>
-        <p><b>Luận hàng loạt (mục Chọn SIM):</b> dán tối đa 50 số, app xếp hạng theo điểm tổng thể, hoặc theo điểm hợp mệnh nếu bạn điền CCCD, hoặc theo 1 lĩnh vực ưu tiên bạn chọn. Nhãn Đuôi xấu gồm đuôi 0, đuôi 05 và hung tinh chốt đuôi; bật mục lọc thì các số đó bị loại khỏi bảng.</p>
+        <p><b>Luận hàng loạt (mục Chọn SIM):</b> dán danh sách hoặc nạp file .txt/.csv, tối đa 20.000 số một lần (bản v1.8, các bản trước chỉ 50 số). App xếp hạng theo điểm tổng thể, hoặc theo điểm hợp mệnh nếu bạn điền CCCD, hoặc theo 1 lĩnh vực ưu tiên bạn chọn. Nhãn Đuôi xấu gồm đuôi 0, đuôi 05 và hung tinh chốt đuôi; bật mục lọc thì các số đó bị loại khỏi bảng. Màn hình chỉ hiện từng đợt 100 số cho nhẹ máy, còn nút <b>Xuất Excel (.xlsx)</b> xuất toàn bộ kết quả đã xếp hạng ra file Excel (mở bằng Excel, Google Sheets, LibreOffice đều được), kèm đủ điểm tổng, điểm 5 lĩnh vực, từ trường và cảnh báo của từng số; có thêm nút xuất CSV dự phòng.</p>
         <p><b>Luận kết hợp CCCD + SIM:</b> mục CCCD + SIM luận riêng từng dãy rồi đối chiếu. Hung tinh trong mệnh (CCCD) nếu gặp đúng cát tinh chế hóa trong SIM (Thiên Y chế Tuyệt Mệnh, Sinh Khí chế Họa Hại, Diên Niên chế Lục Sát, Phục Vị chế Ngũ Quỷ) thì được giảm nhẹ; ngược lại hung tinh nào xuất hiện ở cả mệnh lẫn SIM thì thành cộng hưởng xấu, nặng thêm. Điểm hợp mệnh = điểm trung bình của SIM, cộng 0,4 cho mỗi hung mệnh được chế hóa, cộng 0,2 cho mỗi cát cộng hưởng, trừ 0,5 cho mỗi hung cộng hưởng. Từ điểm này app xếp mức: Rất hợp mệnh, Hợp mệnh, Bình thường, Chưa hợp, Khắc mệnh.</p>
         <p><b>Nguồn nội dung:</b> nhãn <span class="src doc">Tài liệu</span> là nội dung luận lấy từ tài liệu BCLS bạn cung cấp. Nhãn <span class="src web">Bổ sung</span> là nội dung chuẩn phổ biến của BCLS (Kim Tâm Cát) dùng tạm cho phần tài liệu chưa có: mục Họa Hại, Tuyệt Mệnh và bảng cặp số của Phục Vị, Ngũ Quỷ.</p>
         <p><b>Lưu ý:</b> kết quả chỉ mang tính tham khảo theo quan niệm Bát Cực Linh Số, không phải kết luận khoa học. Dữ liệu lịch sử chỉ lưu trên máy này (localStorage), không gửi đi đâu.</p>
@@ -788,23 +805,24 @@ function comboAnalyze(cccdDigits, simDigits, method){
 }
 /* ============ LUAN HANG LOAT - XEP HANG CHON SIM ============ */
 /* priorityKey: "" = tong the; hoac key linh vuc (taivan, sunghiep, tinhcam, suckhoe, quynhan) */
+function buildBatchItem(digits, method, cccdDigits, priorityKey){
+  const r = analyze(digits, method);
+  const ds = domainScores(r);
+  const combo = cccdDigits? comboAnalyze(cccdDigits, digits, method) : null;
+  const tailBad = r.tailAlerts.some(a=>a.cls==="bad");
+  let primary, secondary;
+  if(priorityKey && ds){
+    const d = ds.find(x=>x.key===priorityKey);
+    primary = d? d.pct : 0;
+    secondary = combo? combo.compat : r.avg;
+  } else {
+    primary = combo? combo.compat : r.avg;
+    secondary = r.avg;
+  }
+  return {digits, r, ds, combo, tailBad, primary, secondary};
+}
 function rankBatch(numbers, method, cccdDigits, priorityKey){
-  const items = numbers.map(digits=>{
-    const r = analyze(digits, method);
-    const ds = domainScores(r);
-    const combo = cccdDigits? comboAnalyze(cccdDigits, digits, method) : null;
-    const tailBad = r.tailAlerts.some(a=>a.cls==="bad");
-    let primary, secondary;
-    if(priorityKey && ds){
-      const d = ds.find(x=>x.key===priorityKey);
-      primary = d? d.pct : 0;
-      secondary = combo? combo.compat : r.avg;
-    } else {
-      primary = combo? combo.compat : r.avg;
-      secondary = r.avg;
-    }
-    return {digits, r, ds, combo, tailBad, primary, secondary};
-  });
+  const items = numbers.map(digits=>buildBatchItem(digits, method, cccdDigits, priorityKey));
   items.sort((a,b)=> (b.primary-a.primary) || (b.secondary-a.secondary));
   return items;
 }
@@ -1108,8 +1126,10 @@ segWire("segMethodKH","method", v=>{
 
 /* ============ LUAN HANG LOAT - UI ============ */
 let lastBatch=null;
+const MAX_BATCH=20000, BATCH_PAGE=100;
 function parseBatch(text){
-  const tokens = String(text||"").match(/\d+/g) || [];
+  /* Token co the chua dau cham (09.662.41331) nen gom ca cham vao token roi moi lam sach */
+  const tokens = String(text||"").match(/\d[\d.]*\d|\d/g) || [];
   const seen={}, out=[];
   tokens.forEach(t=>{
     const d=cleanNumber(t);
@@ -1117,34 +1137,62 @@ function parseBatch(text){
   });
   return out;
 }
+function setBatchProgress(done, total){
+  const box=$("batchProgress");
+  if(!total){ box.style.display="none"; return; }
+  box.style.display="block";
+  box.querySelector("div").style.width=Math.round(done/total*100)+"%";
+  box.querySelector("span").textContent="Đang luận "+done.toLocaleString("vi-VN")+" / "+total.toLocaleString("vi-VN")+" số...";
+}
 function doBatch(){
   const nums = parseBatch($("inpBatch").value);
   $("batchError").innerHTML="";
-  if(!nums.length){ $("batchError").innerHTML='<div class="err">Chưa đọc được số nào hợp lệ. Bạn dán danh sách số vào (mỗi số ít nhất 8 chữ số) nhé.</div>'; return; }
+  if(!nums.length){ $("batchError").innerHTML='<div class="err">Chưa đọc được số nào hợp lệ. Bạn dán danh sách số vào, hoặc nạp file .txt (mỗi số ít nhất 8 chữ số) nhé.</div>'; return; }
   let note="";
   let list=nums;
-  if(list.length>50){ list=list.slice(0,50); note="Danh sách dài quá nên app chỉ luận 50 số đầu tiên. "; }
+  if(list.length>MAX_BATCH){ list=list.slice(0,MAX_BATCH); note="Danh sách dài quá "+MAX_BATCH.toLocaleString("vi-VN")+" số nên app chỉ luận "+MAX_BATCH.toLocaleString("vi-VN")+" số đầu tiên. "; }
   const cccdRaw = cleanNumber($("inpCCCD2").value);
   const cccd = cccdRaw.length>=9? cccdRaw : null;
   if(cccdRaw && !cccd) note+="Số CCCD chưa đủ dài nên app bỏ qua phần hợp mệnh. ";
   const priority = $("selPriority").value || "";
-  let items = rankBatch(list, curMethod, cccd, priority);
-  const totalBefore = items.length;
-  if($("chkFilterTail").checked){
-    items = items.filter(it=>!it.tailBad);
-    if(items.length<totalBefore) note+="Đã loại "+(totalBefore-items.length)+" số có đuôi xấu. ";
+  const method = curMethod;
+  const filterTail = $("chkFilterTail").checked;
+  const btn=$("btnBatch");
+  btn.disabled=true; btn.textContent="ĐANG LUẬN...";
+  $("batchResult").innerHTML="";
+  const items=[];
+  let idx=0;
+  const CHUNK=200;
+  function step(){
+    const end=Math.min(list.length, idx+CHUNK);
+    for(; idx<end; idx++) items.push(buildBatchItem(list[idx], method, cccd, priority));
+    setBatchProgress(idx, list.length);
+    if(idx<list.length){ setTimeout(step, 0); return; }
+    items.sort((a,b)=> (b.primary-a.primary) || (b.secondary-a.secondary));
+    let finalItems=items;
+    if(filterTail){
+      finalItems = items.filter(it=>!it.tailBad);
+      if(finalItems.length<items.length) note+="Đã loại "+(items.length-finalItems.length)+" số có đuôi xấu. ";
+    }
+    setBatchProgress(0,0);
+    btn.disabled=false; btn.textContent="LUẬN VÀ XẾP HẠNG";
+    lastBatch = {items:finalItems, cccd, priority, method, shown:BATCH_PAGE, note};
+    renderBatch(finalItems, cccd, priority, note);
   }
-  lastBatch = {items, cccd, priority, method:curMethod};
-  renderBatch(items, cccd, priority, note);
+  setTimeout(step, 30);
 }
 function renderBatch(items, cccd, priority, note){
   const prioName = priority? (DOMAINS.find(d=>d.key===priority)||{}).name : null;
-  let h='<div class="card"><h2>Bảng xếp hạng '+items.length+' số</h2>';
+  const shown = lastBatch? Math.min(lastBatch.shown||BATCH_PAGE, items.length) : items.length;
+  let h='<div class="card"><h2>Bảng xếp hạng '+items.length.toLocaleString("vi-VN")+' số</h2>';
   h+='<p class="hint">Xếp hạng theo: <b style="color:var(--gold2)">'+(prioName? ("lĩnh vực "+prioName) : (cccd? "điểm hợp mệnh với CCCD của bạn" : "điểm tổng thể của dãy SIM"))+'</b>'
-    +(cccd? (" - CCCD: "+esc(cccd)) : "")+". Bấm Xem chi tiết để luận sâu từng số.</p>";
+    +(cccd? (" - CCCD: "+esc(cccd)) : "")+". Bấm Xem chi tiết để luận sâu từng số. Màn hình đang hiện "+shown.toLocaleString("vi-VN")+" số đầu - xuất Excel sẽ có đủ "+items.length.toLocaleString("vi-VN")+" số.</p>";
   if(note) h+='<div class="alert note">'+esc(note)+'</div>';
   if(!items.length) h+='<p class="hint">Không còn số nào sau khi lọc. Bạn bỏ chọn mục loại đuôi xấu rồi thử lại nhé.</p>';
-  items.forEach((it,idx)=>{
+  if(items.length){
+    h+='<div class="toolbar"><button class="btn" id="btnExcelBatch">XUẤT EXCEL (.xlsx)</button><button class="btn secondary" id="btnCsvBatch">Xuất CSV</button><button class="btn secondary" id="btnCopyBatch">Sao chép dạng chữ</button></div><div id="copyMsgBatch" class="hint" style="margin-top:6px;text-align:center"></div>';
+  }
+  items.slice(0, shown).forEach((it,idx)=>{
     const r=it.r;
     const mainTxt = it.combo? (it.combo.verdict+" - hợp mệnh "+it.combo.compat.toFixed(2)) : (r.verdict+" - điểm TB "+r.avg.toFixed(2));
     const domTxt = it.ds? it.ds.map(d=>d.name.split(" - ")[0]+' <b>'+d.pct+"</b>").join(" · ") : "";
@@ -1156,9 +1204,15 @@ function renderBatch(items, cccd, priority, note){
       +(it.tailBad? '<span class="btag bad">Đuôi xấu</span>' : '<span class="btag good">Đuôi ổn</span>')
       +'<button class="bview" data-num="'+esc(it.digits)+'">Xem chi tiết</button></div>';
   });
-  if(items.length) h+='<button class="btn secondary" id="btnCopyBatch">Sao chép bảng xếp hạng dạng chữ</button><div id="copyMsgBatch" class="hint" style="margin-top:6px;text-align:center"></div>';
+  if(items.length>shown){
+    h+='<div class="toolbar"><button class="btn secondary" id="btnMoreBatch">Hiện thêm '+BATCH_PAGE+' số (còn '+(items.length-shown).toLocaleString("vi-VN")+')</button><button class="btn secondary" id="btnAllBatch">Hiện tất cả '+items.length.toLocaleString("vi-VN")+' số</button></div>';
+  }
   h+="</div>";
   $("batchResult").innerHTML=h;
+  const ex=$("btnExcelBatch"); if(ex) ex.addEventListener("click", exportBatchExcel);
+  const cv=$("btnCsvBatch"); if(cv) cv.addEventListener("click", exportBatchCSV);
+  const mb=$("btnMoreBatch"); if(mb) mb.addEventListener("click", ()=>{ lastBatch.shown+=BATCH_PAGE; renderBatch(lastBatch.items, lastBatch.cccd, lastBatch.priority, lastBatch.note); });
+  const ab=$("btnAllBatch"); if(ab) ab.addEventListener("click", ()=>{ lastBatch.shown=lastBatch.items.length; renderBatch(lastBatch.items, lastBatch.cccd, lastBatch.priority, lastBatch.note); });
   $("batchResult").querySelectorAll(".bview").forEach(b=>{
     b.addEventListener("click", ()=>{
       curType="sim";
@@ -1182,6 +1236,141 @@ function renderBatch(items, cccd, priority, note){
   });
   $("batchResult").scrollIntoView({behavior:"smooth", block:"start"});
 }
+/* ============ XUAT FILE CHO LUAN HANG LOAT (Excel xlsx thuan JS, khong can internet/thu vien) ============ */
+function batchExportRows(){
+  const items=lastBatch.items, cccd=lastBatch.cccd;
+  const head=["Hạng","Số điện thoại","Kết luận","Điểm tổng","Điểm TB mỗi cặp","Điểm xếp hạng"];
+  if(cccd) head.push("Điểm hợp mệnh","Kết luận hợp mệnh");
+  head.push("Số cặp cát","Số cặp hung","Số cặp không thành","Điểm cát","Điểm hung","Đuôi số","Cặp chốt đuôi","Tài vận /100","Sự nghiệp /100","Tình cảm - Hôn nhân /100","Sức khỏe /100","Quý nhân - Quan hệ /100","Các từ trường","Chi tiết từng cặp","Cảnh báo và lưu ý");
+  const rows=[head];
+  items.forEach((it,idx)=>{
+    const r=it.r;
+    const lastReal=[...r.pairs].reverse().find(p=>p.key);
+    const row=[idx+1, it.digits, r.verdict, Number(r.score.toFixed(1)), Number(r.avg.toFixed(2)), Number(it.primary.toFixed(2))];
+    if(cccd) row.push(it.combo? Number(it.combo.compat.toFixed(2)) : "", it.combo? it.combo.verdict : "");
+    row.push(r.nCat, r.nHung, r.nNone, Number(r.catPts.toFixed(1)), Number(r.hungPts.toFixed(1)));
+    row.push(it.tailBad? "Đuôi xấu" : "Đuôi ổn");
+    row.push(lastReal? (lastReal.pair+" - "+FIELDS[lastReal.key].name) : "");
+    if(it.ds) it.ds.forEach(d=>row.push(d.pct)); else for(let i=0;i<5;i++) row.push("");
+    const present=Object.keys(r.counts).sort((a,b)=>r.counts[b]-r.counts[a]);
+    row.push(present.map(k=>FIELDS[k].name+" x"+r.counts[k]).join(", "));
+    row.push(r.pairs.map(p=>p.pair+": "+(p.key? FIELDS[p.key].name : "không thành")+(p.mod? " (có "+p.mod+")" : "")).join("; "));
+    row.push([...r.tailAlerts, ...r.comboAlerts].map(a=>a.text).join(" | "));
+    rows.push(row);
+  });
+  return rows;
+}
+function escXml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function colLetter(n){ let s=""; n++; while(n>0){ const m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=Math.floor((n-1)/26); } return s; }
+const CRC_TABLE=(()=>{ const t=[]; for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=(c&1)? (0xEDB88320^(c>>>1)) : (c>>>1); t[n]=c>>>0; } return t; })();
+function crc32(u8){ let c=0xFFFFFFFF; for(let i=0;i<u8.length;i++) c=CRC_TABLE[(c^u8[i])&0xFF]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+function u8concat(parts){ let len=0; parts.forEach(p=>len+=p.length); const out=new Uint8Array(len); let off=0; parts.forEach(p=>{ out.set(p,off); off+=p.length; }); return out; }
+function makeZipStore(files){
+  const enc=new TextEncoder();
+  const now=new Date();
+  const dosTime=((now.getHours()<<11)|(now.getMinutes()<<5)|(Math.floor(now.getSeconds()/2)))&0xFFFF;
+  const dosDate=(((Math.max(0,now.getFullYear()-1980))<<9)|((now.getMonth()+1)<<5)|now.getDate())&0xFFFF;
+  const locals=[], centrals=[]; let offset=0;
+  files.forEach(f=>{
+    const nameU8=enc.encode(f.name), data=f.data, crc=crc32(data);
+    const lh=new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true); lh.setUint16(4,20,true); lh.setUint16(6,0x0800,true); lh.setUint16(8,0,true);
+    lh.setUint16(10,dosTime,true); lh.setUint16(12,dosDate,true); lh.setUint32(14,crc,true);
+    lh.setUint32(18,data.length,true); lh.setUint32(22,data.length,true); lh.setUint16(26,nameU8.length,true); lh.setUint16(28,0,true);
+    locals.push(new Uint8Array(lh.buffer), nameU8, data);
+    const ch=new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true); ch.setUint16(4,20,true); ch.setUint16(6,20,true); ch.setUint16(8,0x0800,true); ch.setUint16(10,0,true);
+    ch.setUint16(12,dosTime,true); ch.setUint16(14,dosDate,true); ch.setUint32(16,crc,true);
+    ch.setUint32(20,data.length,true); ch.setUint32(24,data.length,true); ch.setUint16(28,nameU8.length,true);
+    ch.setUint32(42,offset,true);
+    centrals.push(new Uint8Array(ch.buffer), nameU8);
+    offset+=30+nameU8.length+data.length;
+  });
+  const centralSize=centrals.reduce((s,p)=>s+p.length,0);
+  const end=new DataView(new ArrayBuffer(22));
+  end.setUint32(0,0x06054b50,true); end.setUint16(8,files.length,true); end.setUint16(10,files.length,true);
+  end.setUint32(12,centralSize,true); end.setUint32(16,offset,true);
+  return u8concat([...locals, ...centrals, new Uint8Array(end.buffer)]);
+}
+function buildXLSX(rows, sheetName){
+  const enc=new TextEncoder();
+  const widths=[7,16,30,11,13,12,12,26,11,11,15,10,10,10,22,11,13,15,11,17,34,80,90];
+  let cols="<cols>"+widths.map((w,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>').join("")+"</cols>";
+  let sd="";
+  rows.forEach((row,ri)=>{
+    sd+='<row r="'+(ri+1)+'">';
+    row.forEach((v,ci)=>{
+      const ref=colLetter(ci)+(ri+1), style=(ri===0? ' s="1"' : "");
+      if(typeof v==="number" && isFinite(v)) sd+='<c r="'+ref+'"'+style+'><v>'+v+"</v></c>";
+      else if(v===""||v===null||v===undefined) sd+='<c r="'+ref+'"'+style+"/>";
+      else sd+='<c r="'+ref+'"'+style+' t="inlineStr"><is><t xml:space="preserve">'+escXml(v)+"</t></is></c>";
+    });
+    sd+="</row>";
+  });
+  const sheet='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>'+cols+'<sheetData>'+sd+'</sheetData><autoFilter ref="A1:'+colLetter(rows[0].length-1)+(rows.length)+'"/></worksheet>';
+  const styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF2A1D4E"/><bgColor rgb="FF2A1D4E"/></patternFill></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs></styleSheet>';
+  const wb='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="'+escXml(sheetName||"Ket qua")+'" sheetId="1" r:id="rId1"/></sheets></workbook>';
+  const wbRels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
+  const rels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>';
+  const ct='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>';
+  return makeZipStore([
+    {name:"[Content_Types].xml", data:enc.encode(ct)},
+    {name:"_rels/.rels", data:enc.encode(rels)},
+    {name:"xl/workbook.xml", data:enc.encode(wb)},
+    {name:"xl/_rels/workbook.xml.rels", data:enc.encode(wbRels)},
+    {name:"xl/worksheets/sheet1.xml", data:enc.encode(sheet)},
+    {name:"xl/styles.xml", data:enc.encode(styles)}
+  ]);
+}
+function stampName(prefix, ext){
+  const d=new Date(), p=n=>String(n).padStart(2,"0");
+  return prefix+"-"+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+"-"+p(d.getHours())+p(d.getMinutes())+"."+ext;
+}
+function downloadU8(u8, filename, mime){
+  const blob=new Blob([u8], {type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+}
+function exportBatchExcel(){
+  if(!lastBatch||!lastBatch.items.length) return;
+  const rows=batchExportRows();
+  const u8=buildXLSX(rows, "Xep hang SIM");
+  downloadU8(u8, stampName("ket-qua-luan-sim-"+lastBatch.items.length+"so", "xlsx"), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  const m=$("copyMsgBatch"); if(m) m.textContent="Đã xuất file Excel đủ "+lastBatch.items.length.toLocaleString("vi-VN")+" số.";
+}
+function exportBatchCSV(){
+  if(!lastBatch||!lastBatch.items.length) return;
+  const rows=batchExportRows();
+  const cell=v=>{
+    let s=(v===null||v===undefined)? "" : String(v);
+    if(/[";\n]/.test(s)) s='"'+s.replace(/"/g,'""')+'"';
+    return s;
+  };
+  const csv="\ufeff"+rows.map(r=>r.map(cell).join(";")).join("\r\n");
+  downloadU8(new TextEncoder().encode(csv), stampName("ket-qua-luan-sim-"+lastBatch.items.length+"so", "csv"), "text/csv;charset=utf-8");
+  const m=$("copyMsgBatch"); if(m) m.textContent="Đã xuất file CSV đủ "+lastBatch.items.length.toLocaleString("vi-VN")+" số.";
+}
+/* Nap file txt/csv + dem so nhan dien duoc */
+function updateBatchCount(){
+  const nums=parseBatch($("inpBatch").value);
+  $("batchCount").textContent = $("inpBatch").value.trim()? ("Đã nhận diện "+nums.length.toLocaleString("vi-VN")+" số hợp lệ (đã bỏ số trùng).") : "";
+  return nums.length;
+}
+let batchCountTimer=null;
+$("inpBatch").addEventListener("input", ()=>{ clearTimeout(batchCountTimer); batchCountTimer=setTimeout(updateBatchCount, 350); });
+$("inpBatchFile").addEventListener("change", e=>{
+  const f=e.target.files&&e.target.files[0];
+  if(!f) return;
+  const done=text=>{
+    $("inpBatch").value=text;
+    const n=updateBatchCount();
+    $("batchFileInfo").textContent="Đã nạp file "+f.name+" ("+Math.round(f.size/1024)+" KB) - nhận diện "+n.toLocaleString("vi-VN")+" số. Bấm LUẬN VÀ XẾP HẠNG để chạy.";
+  };
+  if(f.text) f.text().then(done).catch(()=>{ $("batchFileInfo").textContent="Không đọc được file này, bạn thử mở file rồi dán nội dung vào ô danh sách nhé."; });
+  else { const rd=new FileReader(); rd.onload=()=>done(String(rd.result||"")); rd.readAsText(f); }
+});
 $("btnBatch").addEventListener("click", doBatch);
 segWire("segMethodCS","method", v=>{
   curMethod=v;
